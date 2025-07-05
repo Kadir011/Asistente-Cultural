@@ -86,7 +86,7 @@ class UserLogoutView(LogoutView):
             messages.success(request, f'Hasta luego {username}, has cerrado sesión exitosamente.')
         return super().post(request, *args, **kwargs) 
     
-# View para editar el perfil del usuario
+# View para la página del perfil del usuario
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'security/profile.html'
 
