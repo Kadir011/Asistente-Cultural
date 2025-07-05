@@ -1,0 +1,378 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-route text-indigo-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Completa los campos para {{ grabar|lower }}</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-8">
+                {% csrf_token %}
+                
+                <!-- País -->
+                <div class="mb-6">
+                    <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.pais.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.pais }}
+                    {% if form.pais.errors %}
+                        {% for error in form.pais.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Título -->
+                <div class="mb-6">
+                    <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.titulo.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.titulo }}
+                    {% if form.titulo.errors %}
+                        {% for error in form.titulo.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Nombre atractivo del tour o actividad</p>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-6">
+                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descripcion.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        {% for error in form.descripcion.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Descripción detallada del tour, actividades y atractivos</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Duración -->
+                    <div>
+                        <label for="{{ form.duracion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.duracion.label }}
+                        </label>
+                        {{ form.duracion }}
+                        {% if form.duracion.errors %}
+                            {% for error in form.duracion.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Ej: 3 días / 2 noches, 8 horas, Medio día</p>
+                    </div>
+
+                    <!-- Idiomas -->
+                    <div>
+                        <label for="{{ form.idiomas.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.idiomas.label }}
+                        </label>
+                        {{ form.idiomas }}
+                        {% if form.idiomas.errors %}
+                            {% for error in form.idiomas.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Ej: Español, Inglés, Francés</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Precio desde -->
+                    <div>
+                        <label for="{{ form.precio_desde.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.precio_desde.label }}
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">$</span>
+                            </div>
+                            <input type="number" step="0.01" name="{{ form.precio_desde.name }}" id="{{ form.precio_desde.id_for_label }}" value="{{ form.precio_desde.value|default:'' }}" class="pl-7 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="0.00">
+                        </div>
+                        {% if form.precio_desde.errors %}
+                            {% for error in form.precio_desde.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Precio mínimo del tour en USD</p>
+                    </div>
+
+                    <!-- Icono -->
+                    <div>
+                        <label for="{{ form.icono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.icono.label }}
+                        </label>
+                        {{ form.icono }}
+                        {% if form.icono.errors %}
+                            {% for error in form.icono.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Clase CSS del icono de FontAwesome</p>
+                    </div>
+                </div>
+
+                <!-- Iconos sugeridos -->
+                <div class="mb-6">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Iconos sugeridos:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="setIcon('fas fa-hiking')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-hiking mr-1"></i> Senderismo
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-ship')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-ship mr-1"></i> Crucero
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-mountain')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-mountain mr-1"></i> Montaña
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-camera')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-camera mr-1"></i> Fotografía
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-utensils')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-utensils mr-1"></i> Gastronómico
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-university')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-university mr-1"></i> Cultural
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-water')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-water mr-1"></i> Acuático
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-binoculars')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-binoculars mr-1"></i> Observación
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Incluye -->
+                <div class="mb-6">
+                    <label for="{{ form.incluye.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.incluye.label }}
+                    </label>
+                    {{ form.incluye }}
+                    {% if form.incluye.errors %}
+                        {% for error in form.incluye.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Detalla qué incluye el tour: transporte, comidas, guía, entradas, etc.</p>
+                </div>
+
+                <!-- Vista previa -->
+                <div class="mb-8 bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-700 mb-4">Vista previa:</h3>
+                    
+                    <div class="max-w-md mx-auto">
+                        <div class="border border-gray-200 rounded-xl overflow-hidden bg-gradient-to-br from-indigo-50 to-blue-50">
+                            <!-- Header del tour -->
+                            <div class="p-4 border-b border-gray-100">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center mr-3">
+                                            <i id="preview-icon" class="text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900" id="preview-title">Título del tour</h4>
+                                            <p class="text-sm text-gray-500" id="preview-country">País</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right" id="preview-price-container" style="display: none;">
+                                        <div class="text-xs text-gray-500">Desde</div>
+                                        <div class="text-lg font-bold text-indigo-600" id="preview-price">$0</div>
+                                    </div>
+                                </div>
+
+                                <!-- Descripción -->
+                                <p class="text-gray-700 text-sm" id="preview-description">Descripción del tour...</p>
+                            </div>
+
+                            <!-- Detalles del tour -->
+                            <div class="p-4 space-y-3">
+                                <!-- Duración -->
+                                <div class="flex items-center p-2 bg-white rounded-lg border border-indigo-200" id="preview-duration-container" style="display: none;">
+                                    <i class="fas fa-clock text-indigo-500 mr-2"></i>
+                                    <div>
+                                        <div class="text-xs font-medium text-indigo-800">Duración</div>
+                                        <div class="text-xs text-indigo-700" id="preview-duration"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Idiomas -->
+                                <div class="flex items-center p-2 bg-white rounded-lg border border-green-200" id="preview-languages-container" style="display: none;">
+                                    <i class="fas fa-language text-green-500 mr-2"></i>
+                                    <div>
+                                        <div class="text-xs font-medium text-green-800">Idiomas</div>
+                                        <div class="text-xs text-green-700" id="preview-languages"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Incluye -->
+                                <div class="p-2 bg-white rounded-lg border border-blue-200" id="preview-includes-container" style="display: none;">
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-check-circle text-blue-500 mr-1"></i>
+                                        <span class="text-xs font-medium text-blue-800">Incluye</span>
+                                    </div>
+                                    <p class="text-xs text-blue-700" id="preview-includes"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                {% if form.instance.pk %}
+                    <div class="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-indigo-800 mb-2">Información actual:</h3>
+                        <div class="text-sm text-indigo-700 grid grid-cols-2 gap-4">
+                            <div>
+                                <p><strong>País:</strong> {{ form.instance.pais.nombre }}</p>
+                                {% if form.instance.duracion %}
+                                    <p><strong>Duración:</strong> {{ form.instance.duracion }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {% if form.instance.precio_desde %}
+                                    <p><strong>Precio:</strong> ${{ form.instance.precio_desde }}</p>
+                                {% endif %}
+                                {% if form.instance.icono %}
+                                    <p><strong>Icono:</strong> <i class="{{ form.instance.icono }}"></i> {{ form.instance.icono }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Botones -->
+                <div class="pt-6 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-route"></i>
+                            <span>{{ grabar }}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setIcon(iconClass) {
+        document.getElementById('{{ form.icono.id_for_label }}').value = iconClass;
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const titleInput = document.getElementById('{{ form.titulo.id_for_label }}');
+        const countrySelect = document.getElementById('{{ form.pais.id_for_label }}');
+        const descriptionInput = document.getElementById('{{ form.descripcion.id_for_label }}');
+        const durationInput = document.getElementById('{{ form.duracion.id_for_label }}');
+        const languagesInput = document.getElementById('{{ form.idiomas.id_for_label }}');
+        const priceInput = document.getElementById('{{ form.precio_desde.id_for_label }}');
+        const iconInput = document.getElementById('{{ form.icono.id_for_label }}');
+        const includesInput = document.getElementById('{{ form.incluye.id_for_label }}');
+        
+        const previewTitle = document.getElementById('preview-title');
+        const previewCountry = document.getElementById('preview-country');
+        const previewDescription = document.getElementById('preview-description');
+        const previewDuration = document.getElementById('preview-duration');
+        const previewLanguages = document.getElementById('preview-languages');
+        const previewPrice = document.getElementById('preview-price');
+        const previewIcon = document.getElementById('preview-icon');
+        const previewIncludes = document.getElementById('preview-includes');
+        
+        const previewDurationContainer = document.getElementById('preview-duration-container');
+        const previewLanguagesContainer = document.getElementById('preview-languages-container');
+        const previewPriceContainer = document.getElementById('preview-price-container');
+        const previewIncludesContainer = document.getElementById('preview-includes-container');
+        
+        previewTitle.textContent = titleInput.value || 'Título del tour';
+        previewCountry.textContent = countrySelect.options[countrySelect.selectedIndex]?.text || 'País';
+        previewDescription.textContent = descriptionInput.value || 'Descripción del tour...';
+        
+        // Duración
+        if (durationInput.value) {
+            previewDuration.textContent = durationInput.value;
+            previewDurationContainer.style.display = 'flex';
+        } else {
+            previewDurationContainer.style.display = 'none';
+        }
+        
+        // Idiomas
+        if (languagesInput.value) {
+            previewLanguages.textContent = languagesInput.value;
+            previewLanguagesContainer.style.display = 'flex';
+        } else {
+            previewLanguagesContainer.style.display = 'none';
+        }
+        
+        // Precio
+        if (priceInput.value) {
+            previewPrice.textContent = ' + priceInput.value;
+            previewPriceContainer.style.display = 'block';
+        } else {
+            previewPriceContainer.style.display = 'none';
+        }
+        
+        // Incluye
+        if (includesInput.value) {
+            previewIncludes.textContent = includesInput.value;
+            previewIncludesContainer.style.display = 'block';
+        } else {
+            previewIncludesContainer.style.display = 'none';
+        }
+        
+        // Icono
+        const iconClass = iconInput.value || 'fas fa-map-marked-alt';
+        previewIcon.className = iconClass + ' text-white';
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePreview();
+        
+        document.getElementById('{{ form.titulo.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.pais.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.descripcion.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.duracion.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.idiomas.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.precio_desde.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.icono.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.incluye.id_for_label }}').addEventListener('input', updatePreview);
+    });
+</script>
+{% endblock %}

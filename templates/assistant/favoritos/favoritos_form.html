@@ -1,0 +1,221 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-heart text-red-600 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Completa los campos para {{ grabar|lower }}</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-8">
+                {% csrf_token %}
+                
+                <!-- Usuario -->
+                <div class="mb-6">
+                    <label for="{{ form.usuario.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.usuario.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.usuario }}
+                    {% if form.usuario.errors %}
+                        {% for error in form.usuario.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Usuario que marca el tip como favorito</p>
+                </div>
+
+                <!-- Tip Cultural -->
+                <div class="mb-6">
+                    <label for="{{ form.tip.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.tip.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.tip }}
+                    {% if form.tip.errors %}
+                        {% for error in form.tip.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Tip cultural que será marcado como favorito</p>
+                </div>
+
+                <!-- Vista previa del favorito -->
+                <div class="mb-8 bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-700 mb-4">Vista previa:</h3>
+                    
+                    <div class="bg-gradient-to-br from-red-50 to-pink-50 border border-red-200 rounded-xl p-6">
+                        <!-- Header del favorito -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-heart text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900" id="preview-username">Usuario</h4>
+                                    <p class="text-sm text-gray-500">Ahora mismo</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                                <i class="fas fa-heart mr-1"></i>
+                                Favorito
+                            </span>
+                        </div>
+
+                        <!-- Información del tip -->
+                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+                                <span class="text-sm font-medium text-blue-800">Tip Cultural</span>
+                            </div>
+                            
+                            <h5 class="font-semibold text-blue-900 mb-2" id="preview-tip-title">Selecciona un tip cultural</h5>
+                            <p class="text-blue-800 text-sm mb-2" id="preview-tip-content">El contenido del tip aparecerá aquí...</p>
+                            
+                            <div class="grid grid-cols-3 gap-2 text-xs" id="preview-tip-meta" style="display: none;">
+                                <div class="flex items-center">
+                                    <i class="fas fa-globe text-green-500 mr-1"></i>
+                                    <span class="text-gray-600" id="preview-tip-country">País</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-tag text-orange-500 mr-1"></i>
+                                    <span class="text-gray-600" id="preview-tip-category">Categoría</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-user text-purple-500 mr-1"></i>
+                                    <span class="text-gray-600" id="preview-tip-type">Tipo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                {% if form.instance.pk %}
+                    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-red-800 mb-2">Información actual:</h3>
+                        <div class="text-sm text-red-700">
+                            <p><strong>Usuario:</strong> {{ form.instance.usuario.get_full_name|default:form.instance.usuario.username }}</p>
+                            <p><strong>Tip:</strong> {{ form.instance.tip.titulo|default:"Sin título" }}</p>
+                            <p><strong>Fecha guardado:</strong> {{ form.instance.fecha_guardado|date:"d M Y H:i" }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                    <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Botones -->
+                <div class="pt-6 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-heart"></i>
+                            <span>{{ grabar }}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Datos de tips para la vista previa
+    let tipsData = {};
+    
+    function updatePreview() {
+        const userSelect = document.getElementById('{{ form.usuario.id_for_label }}');
+        const tipSelect = document.getElementById('{{ form.tip.id_for_label }}');
+        
+        const previewUsername = document.getElementById('preview-username');
+        const previewTipTitle = document.getElementById('preview-tip-title');
+        const previewTipContent = document.getElementById('preview-tip-content');
+        const previewTipMeta = document.getElementById('preview-tip-meta');
+        const previewTipCountry = document.getElementById('preview-tip-country');
+        const previewTipCategory = document.getElementById('preview-tip-category');
+        const previewTipType = document.getElementById('preview-tip-type');
+        
+        // Actualizar usuario
+        const selectedUser = userSelect.options[userSelect.selectedIndex];
+        if (selectedUser && selectedUser.value) {
+            previewUsername.textContent = selectedUser.text;
+        } else {
+            previewUsername.textContent = 'Usuario';
+        }
+        
+        // Actualizar tip
+        const selectedTip = tipSelect.options[tipSelect.selectedIndex];
+        if (selectedTip && selectedTip.value) {
+            previewTipTitle.textContent = selectedTip.text;
+            
+            // Si tenemos datos del tip, mostrar información adicional
+            const tipData = tipsData[selectedTip.value];
+            if (tipData) {
+                previewTipContent.textContent = tipData.contenido || 'Sin contenido disponible';
+                previewTipCountry.textContent = tipData.pais || 'Sin país';
+                previewTipCategory.textContent = tipData.categoria || 'Sin categoría';
+                previewTipType.textContent = tipData.tipo_viajero || 'General';
+                previewTipMeta.style.display = 'grid';
+            } else {
+                previewTipContent.textContent = 'Información del tip seleccionado';
+                previewTipMeta.style.display = 'none';
+            }
+        } else {
+            previewTipTitle.textContent = 'Selecciona un tip cultural';
+            previewTipContent.textContent = 'El contenido del tip aparecerá aquí...';
+            previewTipMeta.style.display = 'none';
+        }
+    }
+
+    // Cargar datos de tips mediante AJAX (opcional - mejoraría la experiencia)
+    function loadTipData(tipId) {
+        if (!tipId || tipsData[tipId]) return;
+        
+        // Aquí podrías hacer una llamada AJAX para obtener los datos del tip
+        // Por ahora, simularemos con datos vacíos
+        tipsData[tipId] = {
+            contenido: 'Contenido del tip seleccionado...',
+            pais: 'País del tip',
+            categoria: 'Categoría del tip',
+            tipo_viajero: 'Tipo de viajero'
+        };
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePreview();
+        
+        document.getElementById('{{ form.usuario.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.tip.id_for_label }}').addEventListener('change', function() {
+            loadTipData(this.value);
+            updatePreview();
+        });
+    });
+</script>
+{% endblock %}

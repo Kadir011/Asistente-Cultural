@@ -1,0 +1,273 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Completa los campos para {{ grabar|lower }}</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-8">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- País -->
+                    <div>
+                        <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.pais.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.pais }}
+                        {% if form.pais.errors %}
+                            {% for error in form.pais.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Tipo -->
+                    <div>
+                        <label for="{{ form.tipo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.tipo.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.tipo }}
+                        {% if form.tipo.errors %}
+                            {% for error in form.tipo.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Selecciona el tipo de norma según su naturaleza</p>
+                    </div>
+                </div>
+
+                <!-- Título -->
+                <div class="mt-6">
+                    <label for="{{ form.titulo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.titulo.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.titulo }}
+                    {% if form.titulo.errors %}
+                        {% for error in form.titulo.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Título conciso y descriptivo de la norma</p>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mt-6">
+                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descripcion.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        {% for error in form.descripcion.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Explicación detallada de la norma, qué implica y por qué es importante</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <!-- Orden -->
+                    <div>
+                        <label for="{{ form.orden.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.orden.label }}
+                        </label>
+                        {{ form.orden }}
+                        {% if form.orden.errors %}
+                            {% for error in form.orden.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Orden de aparición (número menor aparece primero)</p>
+                    </div>
+
+                    <!-- Icono -->
+                    <div>
+                        <label for="{{ form.icono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.icono.label }}
+                        </label>
+                        {{ form.icono }}
+                        {% if form.icono.errors %}
+                            {% for error in form.icono.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Clase CSS del icono de FontAwesome</p>
+                    </div>
+                </div>
+
+                <!-- Iconos sugeridos -->
+                <div class="mt-4">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Iconos sugeridos:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="setIcon('fas fa-passport')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-passport mr-1"></i> Pasaporte
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-syringe')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-syringe mr-1"></i> Vacuna
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-ban')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-ban mr-1"></i> Prohibido
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-exclamation-triangle')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-exclamation-triangle mr-1"></i> Precaución
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-calendar')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-calendar mr-1"></i> Fecha
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-money-bill')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-money-bill mr-1"></i> Dinero
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-shield-alt')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-shield-alt mr-1"></i> Seguridad
+                        </button>
+                        <button type="button" onclick="setIcon('fas fa-file-alt')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm hover:bg-gray-200">
+                            <i class="fas fa-file-alt mr-1"></i> Documento
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Vista previa -->
+                <div class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-3">Vista previa:</h3>
+                    <div class="border border-gray-200 rounded-lg p-4 bg-white max-w-md">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-4" id="preview-icon-bg">
+                                <i id="preview-icon" class="text-white text-lg"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900" id="preview-title">Título de la norma</h4>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium" id="preview-type-badge">
+                                        Tipo
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-500 mb-2" id="preview-country">País</p>
+                                <p class="text-gray-700 text-sm" id="preview-description">Descripción de la norma...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                {% if form.instance.pk %}
+                    <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-red-800 mb-2">Información actual:</h3>
+                        <div class="text-sm text-red-700 grid grid-cols-2 gap-4">
+                            <div>
+                                <p><strong>Tipo:</strong> {{ form.instance.get_tipo_display }}</p>
+                                <p><strong>Orden:</strong> {{ form.instance.orden }}</p>
+                            </div>
+                            <div>
+                                <p><strong>País:</strong> {{ form.instance.pais.nombre }}</p>
+                                {% if form.instance.icono %}
+                                    <p><strong>Icono:</strong> <i class="{{ form.instance.icono }}"></i> {{ form.instance.icono }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                    <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Botones -->
+                <div class="pt-6 border-t border-gray-200 mt-8">
+                    <div class="flex items-center justify-between">
+                        <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>{{ grabar }}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const tipoColors = {
+        'regla': { bg: 'bg-gradient-to-br from-blue-400 to-blue-600', badge: 'bg-blue-100 text-blue-800', icon: 'fas fa-clipboard-list' },
+        'precaucion': { bg: 'bg-gradient-to-br from-yellow-400 to-yellow-600', badge: 'bg-yellow-100 text-yellow-800', icon: 'fas fa-exclamation-triangle' },
+        'prohibicion': { bg: 'bg-gradient-to-br from-red-400 to-red-600', badge: 'bg-red-100 text-red-800', icon: 'fas fa-ban' },
+        'recomendacion': { bg: 'bg-gradient-to-br from-green-400 to-green-600', badge: 'bg-green-100 text-green-800', icon: 'fas fa-thumbs-up' }
+    };
+
+    function setIcon(iconClass) {
+        document.getElementById('{{ form.icono.id_for_label }}').value = iconClass;
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const titleInput = document.getElementById('{{ form.titulo.id_for_label }}');
+        const countrySelect = document.getElementById('{{ form.pais.id_for_label }}');
+        const tipoSelect = document.getElementById('{{ form.tipo.id_for_label }}');
+        const descriptionInput = document.getElementById('{{ form.descripcion.id_for_label }}');
+        const iconInput = document.getElementById('{{ form.icono.id_for_label }}');
+        
+        const previewTitle = document.getElementById('preview-title');
+        const previewCountry = document.getElementById('preview-country');
+        const previewDescription = document.getElementById('preview-description');
+        const previewIcon = document.getElementById('preview-icon');
+        const previewIconBg = document.getElementById('preview-icon-bg');
+        const previewTypeBadge = document.getElementById('preview-type-badge');
+        
+        previewTitle.textContent = titleInput.value || 'Título de la norma';
+        previewCountry.textContent = countrySelect.options[countrySelect.selectedIndex]?.text || 'País';
+        previewDescription.textContent = descriptionInput.value || 'Descripción de la norma...';
+        
+        const tipoValue = tipoSelect.value;
+        const tipoConfig = tipoColors[tipoValue] || { bg: 'bg-gradient-to-br from-gray-400 to-gray-600', badge: 'bg-gray-100 text-gray-800', icon: 'fas fa-info-circle' };
+        
+        // Actualizar icono y fondo
+        const iconClass = iconInput.value || tipoConfig.icon;
+        previewIcon.className = iconClass + ' text-white text-lg';
+        previewIconBg.className = 'w-10 h-10 rounded-full flex items-center justify-center mr-4 ' + tipoConfig.bg;
+        
+        // Actualizar badge de tipo
+        const tipoText = tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Tipo';
+        previewTypeBadge.textContent = tipoText;
+        previewTypeBadge.className = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + tipoConfig.badge;
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePreview();
+        
+        document.getElementById('{{ form.titulo.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.pais.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.tipo.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.descripcion.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.icono.id_for_label }}').addEventListener('input', updatePreview);
+    });
+</script>
+{% endblock %}

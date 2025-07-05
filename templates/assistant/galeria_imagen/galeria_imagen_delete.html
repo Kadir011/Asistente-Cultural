@@ -1,0 +1,264 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Esta acción no se puede deshacer</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Cancelar</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Información de la imagen a eliminar -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <!-- Vista previa de la imagen -->
+            {% if object.imagen %}
+                <div class="relative h-80 bg-gradient-to-br from-pink-400 to-pink-600">
+                    <img src="{{ object.get_image_url }}" alt="{{ object.titulo|default:'Imagen de galería' }}" class="w-full h-full object-cover">
+                    
+                    <!-- Overlay con información -->
+                    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+                    
+                    <!-- Número de orden -->
+                    <div class="absolute top-4 left-4">
+                        <span class="inline-flex items-center justify-center w-10 h-10 bg-pink-500 text-white text-lg font-bold rounded-full">
+                            {{ object.orden }}
+                        </span>
+                    </div>
+
+                    <!-- Información superpuesta -->
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <h3 class="text-2xl font-bold">{{ object.titulo|default:"Sin título" }}</h3>
+                        <p class="text-lg opacity-90">{{ object.pais.nombre }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="relative h-80 bg-gradient-to-br from-pink-400 to-pink-600">
+                    <div class="w-full h-full flex items-center justify-center">
+                        <i class="fas fa-image text-white text-8xl opacity-50"></i>
+                    </div>
+                    
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <h3 class="text-2xl font-bold">{{ object.titulo|default:"Sin título" }}</h3>
+                        <p class="text-lg opacity-90">{{ object.pais.nombre }}</p>
+                        <p class="text-sm opacity-75">Imagen no disponible</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="p-6">
+                <!-- Información básica -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-globe text-pink-500 mr-3"></i>
+                            <div>
+                                <div class="text-sm font-medium text-pink-800">País</div>
+                                <div class="text-sm text-pink-700">{{ object.pais.nombre }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-sort-numeric-up text-blue-500 mr-3"></i>
+                            <div>
+                                <div class="text-sm font-medium text-blue-800">Orden en galería</div>
+                                <div class="text-sm text-blue-700">{{ object.orden }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Título y descripción -->
+                {% if object.titulo %}
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Título:</h4>
+                        <p class="text-gray-900 font-semibold bg-gray-50 p-3 rounded-lg">{{ object.titulo }}</p>
+                    </div>
+                {% endif %}
+
+                {% if object.descripcion %}
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Descripción:</h4>
+                        <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{{ object.descripcion }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Estado del archivo -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Estado del archivo:</h4>
+                    {% if object.imagen %}
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-green-800">Imagen subida correctamente</div>
+                                    <div class="text-sm text-green-700">El archivo de imagen está disponible en el servidor</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-times-circle text-red-500 mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-red-800">Sin archivo de imagen</div>
+                                    <div class="text-sm text-red-700">No hay archivo de imagen asociado</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Advertencia -->
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">¡Atención!</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <p>{{ description }}</p>
+                                <p class="mt-2">Esta acción eliminará:</p>
+                                <ul class="list-disc list-inside mt-1 space-y-1">
+                                    <li>El registro de la imagen en la galería</li>
+                                    {% if object.imagen %}
+                                        <li>El archivo de imagen del servidor (permanentemente)</li>
+                                    {% endif %}
+                                    <li>El título y descripción asociados</li>
+                                    <li>La posición en el orden de la galería</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del país -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Información del país:</h4>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            {% if object.pais.ilustracion %}
+                                <img src="{{ object.pais.get_image_url }}" alt="{{ object.pais.nombre }}" class="w-12 h-12 rounded-full object-cover mr-4">
+                            {% else %}
+                                <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-globe text-green-500"></i>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="font-medium text-green-800">{{ object.pais.nombre }}</div>
+                                <div class="text-sm text-green-700">{{ object.pais.codigo_iso }}</div>
+                                <div class="text-sm text-green-600">{{ object.pais.galeria.count }} imagen{{ object.pais.galeria.count|pluralize:"es" }} en total</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impacto en la galería -->
+                {% if object.pais.galeria.count > 1 %}
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-3">Impacto en la galería:</h4>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-info-circle text-yellow-500 mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-yellow-800">Reordenamiento automático</div>
+                                    <div class="text-sm text-yellow-700">
+                                        Las imágenes con orden superior se reorganizarán automáticamente.
+                                        Quedarán {{ object.pais.galeria.count|add:"-1" }} imagen{{ object.pais.galeria.count|add:"-1"|pluralize:"es" }} en la galería de {{ object.pais.nombre }}.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Estadísticas -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-pink-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-pink-600">{{ object.orden }}</div>
+                        <div class="text-sm text-pink-600">Posición actual</div>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600">{{ object.pais.galeria.count }}</div>
+                        <div class="text-sm text-blue-600">Total en galería</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-purple-600">
+                            {% if object.imagen %}✓{% else %}✗{% endif %}
+                        </div>
+                        <div class="text-sm text-purple-600">Archivo presente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de confirmación -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-6">
+                {% csrf_token %}
+                
+                <!-- Confirmación de eliminación -->
+                <div class="mb-6">
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" 
+                               class="w-4 h-4 text-red-500 focus:ring-red-400 border-gray-300 rounded" 
+                               required 
+                               id="confirm-delete">
+                        <span class="text-sm font-medium text-gray-700">
+                            Confirmo que deseo eliminar permanentemente esta imagen de la galería
+                            {% if object.imagen %}
+                                y entiendo que el archivo también será eliminado del servidor
+                            {% endif %}
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex items-center justify-between">
+                    <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Cancelar</span>
+                    </a>
+                    <button type="submit" 
+                            class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl opacity-50 cursor-not-allowed"
+                            disabled
+                            id="delete-button">
+                        <i class="fas fa-trash"></i>
+                        <span>{{ grabar }}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Habilitar botón de eliminar solo cuando se confirme
+    document.getElementById('confirm-delete').addEventListener('change', function() {
+        const deleteButton = document.getElementById('delete-button');
+        if (this.checked) {
+            deleteButton.disabled = false;
+            deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            deleteButton.disabled = true;
+            deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+</script>
+{% endblock %}

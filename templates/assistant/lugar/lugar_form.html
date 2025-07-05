@@ -1,0 +1,303 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-map-marker-alt text-teal-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Completa los campos para {{ grabar|lower }}</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" enctype="multipart/form-data" class="p-8">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- País -->
+                    <div>
+                        <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.pais.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.pais }}
+                        {% if form.pais.errors %}
+                            {% for error in form.pais.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Región -->
+                    <div>
+                        <label for="{{ form.region.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.region.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.region }}
+                        {% if form.region.errors %}
+                            {% for error in form.region.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Nombre -->
+                <div class="mt-6">
+                    <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.nombre.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        {% for error in form.nombre.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Ej: Islas Galápagos, Machu Picchu, Centro Histórico de Quito</p>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mt-6">
+                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descripcion.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        {% for error in form.descripcion.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Descripción detallada del lugar, atractivos y características principales</p>
+                </div>
+
+                <!-- Imagen -->
+                <div class="mt-6">
+                    <label for="{{ form.imagen.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.imagen.label }}
+                    </label>
+                    
+                    <!-- Imagen actual -->
+                    {% if form.instance.imagen %}
+                        <div class="mb-4">
+                            <img src="{{ form.instance.get_image_url }}" alt="{{ form.instance.nombre }}" 
+                                 class="w-32 h-32 object-cover rounded-lg border border-gray-200">
+                            <p class="text-sm text-gray-500 mt-1">Imagen actual</p>
+                        </div>
+                    {% endif %}
+                    
+                    {{ form.imagen }}
+                    {% if form.imagen.errors %}
+                        {% for error in form.imagen.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Sube una imagen representativa del lugar (JPG, PNG, máx. 5MB)</p>
+                </div>
+
+                <!-- Destacado -->
+                <div class="mt-6">
+                    <div class="flex items-center">
+                        {{ form.destacado }}
+                        <label for="{{ form.destacado.id_for_label }}" class="ml-2 text-sm font-medium text-gray-700">
+                            {{ form.destacado.label }}
+                        </label>
+                    </div>
+                    {% if form.destacado.errors %}
+                        {% for error in form.destacado.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Marcar como lugar destacado aparecerá prominentemente en el sitio</p>
+                </div>
+
+                <!-- Vista previa -->
+                <div class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-3">Vista previa:</h3>
+                    <div class="border border-gray-200 rounded-lg overflow-hidden bg-white max-w-sm">
+                        <!-- Imagen preview -->
+                        <div class="relative h-32 bg-gradient-to-br from-teal-400 to-teal-600" id="preview-image-container">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-image text-white text-2xl opacity-50"></i>
+                            </div>
+                            
+                            <!-- Badges preview -->
+                            <div class="absolute top-2 left-2" id="preview-destacado" style="display: none;">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-500 text-white font-medium">
+                                    <i class="fas fa-star mr-1"></i>
+                                    Destacado
+                                </span>
+                            </div>
+
+                            <div class="absolute top-2 right-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-500 text-white" id="preview-region">
+                                    Región
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Contenido preview -->
+                        <div class="p-4">
+                            <h4 class="font-semibold text-gray-900" id="preview-name">Nombre del lugar</h4>
+                            <p class="text-sm text-gray-500 flex items-center">
+                                <i class="fas fa-globe text-teal-500 mr-1"></i>
+                                <span id="preview-country">País</span>
+                            </p>
+                            <p class="text-gray-700 text-sm mt-2" id="preview-description">Descripción del lugar...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                {% if form.instance.pk %}
+                    <div class="mt-6 bg-teal-50 border border-teal-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-teal-800 mb-2">Información actual:</h3>
+                        <div class="text-sm text-teal-700 grid grid-cols-2 gap-4">
+                            <div>
+                                <p><strong>Estado:</strong> {% if form.instance.destacado %}Destacado{% else %}Normal{% endif %}</p>
+                                <p><strong>Región:</strong> {{ form.instance.get_region_display }}</p>
+                            </div>
+                            <div>
+                                <p><strong>País:</strong> {{ form.instance.pais.nombre }}</p>
+                                {% if form.instance.imagen %}
+                                    <p><strong>Imagen:</strong> Sí</p>
+                                {% else %}
+                                    <p><strong>Imagen:</strong> No</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                    <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Botones -->
+                <div class="pt-6 border-t border-gray-200 mt-8">
+                    <div class="flex items-center justify-between">
+                        <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ grabar }}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const regionColors = {
+        'costa': 'bg-blue-500 text-white',
+        'sierra': 'bg-gray-500 text-white',
+        'amazonia': 'bg-green-500 text-white',
+        'galapagos': 'bg-cyan-500 text-white',
+        'norte': 'bg-indigo-500 text-white',
+        'sur': 'bg-purple-500 text-white',
+        'centro': 'bg-orange-500 text-white',
+        'este': 'bg-pink-500 text-white',
+        'oeste': 'bg-red-500 text-white'
+    };
+
+    function updatePreview() {
+        const nameInput = document.getElementById('{{ form.nombre.id_for_label }}');
+        const countrySelect = document.getElementById('{{ form.pais.id_for_label }}');
+        const regionSelect = document.getElementById('{{ form.region.id_for_label }}');
+        const descriptionInput = document.getElementById('{{ form.descripcion.id_for_label }}');
+        const destacadoInput = document.getElementById('{{ form.destacado.id_for_label }}');
+        
+        const previewName = document.getElementById('preview-name');
+        const previewCountry = document.getElementById('preview-country');
+        const previewRegion = document.getElementById('preview-region');
+        const previewDescription = document.getElementById('preview-description');
+        const previewDestacado = document.getElementById('preview-destacado');
+        
+        previewName.textContent = nameInput.value || 'Nombre del lugar';
+        previewCountry.textContent = countrySelect.options[countrySelect.selectedIndex]?.text || 'País';
+        previewDescription.textContent = descriptionInput.value || 'Descripción del lugar...';
+        
+        // Actualizar región con color
+        const regionValue = regionSelect.value;
+        const regionText = regionSelect.options[regionSelect.selectedIndex]?.text || 'Región';
+        previewRegion.textContent = regionText;
+        previewRegion.className = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + 
+                                  (regionColors[regionValue] || 'bg-gray-500 text-white');
+        
+        // Mostrar/ocultar badge destacado
+        if (destacadoInput.checked) {
+            previewDestacado.style.display = 'block';
+        } else {
+            previewDestacado.style.display = 'none';
+        }
+    }
+
+    // Previsualizar imagen
+    function previewImage(input) {
+        const previewContainer = document.getElementById('preview-image-container');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewContainer.innerHTML = `
+                    <img src="${e.target.result}" class="w-full h-full object-cover" alt="Preview">
+                    <div class="absolute top-2 left-2" id="preview-destacado" style="display: ${document.getElementById('{{ form.destacado.id_for_label }}').checked ? 'block' : 'none'};">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-500 text-white font-medium">
+                            <i class="fas fa-star mr-1"></i>
+                            Destacado
+                        </span>
+                    </div>
+                    <div class="absolute top-2 right-2">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-500 text-white" id="preview-region">
+                            Región
+                        </span>
+                    </div>
+                `;
+                updatePreview(); // Actualizar badges después de cargar imagen
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePreview();
+        
+        document.getElementById('{{ form.nombre.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.pais.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.region.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.descripcion.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.destacado.id_for_label }}').addEventListener('change', updatePreview);
+        
+        // Preview de imagen
+        const imageInput = document.getElementById('{{ form.imagen.id_for_label }}');
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                previewImage(this);
+            });
+        }
+    });
+</script>
+{% endblock %}

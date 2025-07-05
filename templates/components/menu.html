@@ -1,0 +1,274 @@
+{% extends 'components/base.html' %}
+
+{% block title %}Panel de Administración - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-cogs text-orange-500 mr-3"></i>
+                        Panel de Administración
+                    </h1>
+                    <p class="text-gray-600 mt-2">Gestiona todos los contenidos de TravelWorld</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-gray-500">Bienvenido</p>
+                    <p class="font-semibold text-gray-900">{{ user.get_full_name|default:user.username }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secciones del menú -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            
+            <!-- ===============================
+                 GESTIÓN DE PAÍSES
+                 =============================== -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-globe-americas mr-3"></i>
+                        Gestión de Países
+                    </h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{% url 'assistant:pais_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-list text-blue-500 mr-3"></i>
+                            Ver Países
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:pais_create' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-plus text-green-500 mr-3"></i>
+                            Crear País
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-green-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:idioma_oficial_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-language text-purple-500 mr-3"></i>
+                            Idiomas Oficiales
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-purple-500"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 CONTENIDO CULTURAL
+                 =============================== -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-book-open mr-3"></i>
+                        Contenido Cultural
+                    </h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{% url 'assistant:tip_cultural_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-orange-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-lightbulb text-orange-500 mr-3"></i>
+                            Tips Culturales
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-orange-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:categoria_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-yellow-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-tags text-yellow-500 mr-3"></i>
+                            Categorías
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-yellow-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:tipo_viajero_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-user-friends text-indigo-500 mr-3"></i>
+                            Tipos de Viajero
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-indigo-500"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 INFORMACIÓN DETALLADA
+                 =============================== -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-info-circle mr-3"></i>
+                        Información Detallada
+                    </h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{% url 'assistant:temporada_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-calendar-alt text-green-500 mr-3"></i>
+                            Temporadas
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-green-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:lugar_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-emerald-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-emerald-500 mr-3"></i>
+                            Lugares
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-emerald-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:norma_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-teal-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-teal-500 mr-3"></i>
+                            Normas
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-teal-500"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 MULTIMEDIA Y RECURSOS
+                 =============================== -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-images mr-3"></i>
+                        Multimedia
+                    </h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{% url 'assistant:galeria_imagen_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-photo-video text-purple-500 mr-3"></i>
+                            Galería de Imágenes
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-purple-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:frase_util_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-pink-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-volume-up text-pink-500 mr-3"></i>
+                            Frases Útiles
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-pink-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:informacion_tour_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-violet-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-route text-violet-500 mr-3"></i>
+                            Info de Tours
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-violet-500"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 GESTIÓN DE USUARIOS
+                 =============================== -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-gradient-to-r from-gray-600 to-gray-700 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-users mr-3"></i>
+                        Gestión de Usuarios
+                    </h2>
+                </div>
+                <div class="p-6 space-y-3">
+                    <a href="{% url 'assistant:favoritos_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-heart text-red-500 mr-3"></i>
+                            Favoritos
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-red-500"></i>
+                    </a>
+                    <a href="{% url 'assistant:historial_list' %}" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors group">
+                        <span class="flex items-center">
+                            <i class="fas fa-history text-gray-600 mr-3"></i>
+                            Historial
+                        </span>
+                        <i class="fas fa-arrow-right text-gray-400 group-hover:text-gray-600"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 HERRAMIENTAS ÚTILES
+                 =============================== -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden lg:col-span-2 xl:col-span-3">
+                <div class="bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-tools mr-3"></i>
+                        Herramientas Útiles
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <a href="{% url 'assistant:recomendaciones' %}" class="flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 rounded-xl transition-colors group border border-blue-200">
+                            <i class="fas fa-magic text-3xl text-blue-500 mb-3 group-hover:text-blue-600"></i>
+                            <span class="font-semibold text-gray-800">Recomendaciones</span>
+                            <span class="text-sm text-gray-600 text-center mt-1">Sistema de recomendaciones</span>
+                        </a>
+                        <a href="{% url 'assistant:contact' %}" class="flex flex-col items-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 rounded-xl transition-colors group border border-green-200">
+                            <i class="fas fa-envelope text-3xl text-green-500 mb-3 group-hover:text-green-600"></i>
+                            <span class="font-semibold text-gray-800">Contacto</span>
+                            <span class="text-sm text-gray-600 text-center mt-1">Gestionar mensajes</span>
+                        </a>
+                        <a href="{% url 'assistant:about' %}" class="flex flex-col items-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 rounded-xl transition-colors group border border-purple-200">
+                            <i class="fas fa-info-circle text-3xl text-purple-500 mb-3 group-hover:text-purple-600"></i>
+                            <span class="font-semibold text-gray-800">Acerca de</span>
+                            <span class="text-sm text-gray-600 text-center mt-1">Información del sitio</span>
+                        </a>
+                        <a href="{% url 'assistant:home' %}" class="flex flex-col items-center p-4 bg-gradient-to-br from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-xl transition-colors group border border-orange-200">
+                            <i class="fas fa-home text-3xl text-orange-500 mb-3 group-hover:text-orange-600"></i>
+                            <span class="font-semibold text-gray-800">Ver Sitio</span>
+                            <span class="text-sm text-gray-600 text-center mt-1">Ir al sitio web</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Países</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_paises|default:0 }}</p>
+                    </div>
+                    <i class="fas fa-globe text-3xl text-blue-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Tips Culturales</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_tips|default:0 }}</p>
+                    </div>
+                    <i class="fas fa-lightbulb text-3xl text-orange-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Usuarios Activos</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_usuarios|default:0 }}</p>
+                    </div>
+                    <i class="fas fa-users text-3xl text-green-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Imágenes</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_imagenes|default:0 }}</p>
+                    </div>
+                    <i class="fas fa-images text-3xl text-purple-500"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

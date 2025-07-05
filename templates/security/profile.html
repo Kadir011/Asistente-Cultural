@@ -1,0 +1,334 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-orange-600 to-orange-800 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+            <!-- Avatar -->
+            <div class="flex-shrink-0">
+                <div class="w-32 h-32 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-6xl font-bold">
+                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
+            </div>
+            
+            <!-- User Info -->
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl font-bold mb-2">{{ user.get_full_name }}</h1>
+                <p class="text-orange-100 text-lg mb-2">@{{ user.username }}</p>
+                {% if user.tipo_viajero %}
+                <div class="inline-flex items-center bg-orange-500 bg-opacity-30 px-4 py-2 rounded-full">
+                    <i class="fas fa-user-tag mr-2"></i>
+                    <span>{{ user.tipo_viajero.nombre }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Información Personal -->
+        <div class="lg:col-span-2 space-y-8">
+            
+            <!-- Información Básica -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Nombre Completo</label>
+                        <p class="text-gray-900 font-medium">{{ user.get_full_name }}</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Correo Electrónico</label>
+                        <p class="text-gray-900">{{ user.email }}</p>
+                    </div>
+                    
+                    {% if user.phone_number %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Teléfono</label>
+                        <p class="text-gray-900">{{ user.phone_number }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.date_of_birth %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Fecha de Nacimiento</label>
+                        <p class="text-gray-900">{{ user.date_of_birth|date:"d M Y" }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.gender %}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Género</label>
+                        <p class="text-gray-900">
+                            {% if user.gender == 'M' %}Masculino{% else %}Femenino{% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.address %}
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Dirección</label>
+                        <p class="text-gray-900">{{ user.address }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actividad Reciente -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Actividad Reciente</h2>
+                
+                <!-- Tabs -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-8">
+                        <button onclick="showTab('favoritos')" 
+                                class="tab-button text-orange-500 border-orange-500 py-2 px-1 border-b-2 font-medium text-sm" 
+                                id="favoritos-tab">
+                            Favoritos Recientes
+                        </button>
+                        <button onclick="showTab('historial')" 
+                                class="tab-button text-gray-500 hover:text-gray-700 py-2 px-1 border-b-2 border-transparent hover:border-gray-300 font-medium text-sm" 
+                                id="historial-tab">
+                            Historial
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Favoritos Tab -->
+                <div id="favoritos-content" class="tab-content">
+                    {% if favoritos_recientes %}
+                        <div class="space-y-4">
+                            {% for favorito in favoritos_recientes %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-heart text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">
+                                            {{ favorito.tip.pais.nombre|default:"País no disponible" }} - {{ favorito.tip.titulo|default:"Sin título" }}
+                                        </h4>
+                                        <p class="text-sm text-gray-600">
+                                            {{ favorito.fecha_guardado|date:"d M Y" }}
+                                        </p>
+                                    </div>
+                                </div>
+                                {% if favorito.tip.pais %}
+                                <a href="{% url 'assistant:pais_detail' favorito.tip.pais.id %}" 
+                                   class="text-orange-500 hover:text-orange-600">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <a href="{% url 'assistant:mis_favoritos' %}" 
+                               class="text-orange-500 hover:text-orange-600 font-medium">
+                                Ver todos mis favoritos <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-heart text-gray-300 text-4xl mb-4"></i>
+                            <p class="text-gray-500">No tienes favoritos aún</p>
+                            <a href="{% url 'assistant:paises_public' %}" 
+                               class="text-orange-500 hover:text-orange-600 font-medium">
+                                Explorar países
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Historial Tab -->
+                <div id="historial-content" class="tab-content hidden">
+                    {% if historial_reciente %}
+                        <div class="space-y-4">
+                            {% for visita in historial_reciente %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-eye text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">
+                                            {{ visita.pais.nombre|default:"País no disponible" }}
+                                        </h4>
+                                        <p class="text-sm text-gray-600">
+                                            {{ visita.fecha_consulta|date:"d M Y H:i" }}
+                                        </p>
+                                    </div>
+                                </div>
+                                {% if visita.pais %}
+                                <a href="{% url 'assistant:pais_detail' visita.pais.id %}" 
+                                   class="text-blue-500 hover:text-blue-600">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-history text-gray-300 text-4xl mb-4"></i>
+                            <p class="text-gray-500">No has visitado ningún país aún</p>
+                            <a href="{% url 'assistant:paises_public' %}" 
+                               class="text-orange-500 hover:text-orange-600 font-medium">
+                                Explorar países
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-8">
+            
+            <!-- Estadísticas -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Mis Estadísticas</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-heart text-red-500"></i>
+                            </div>
+                            <span class="text-gray-700">Países Favoritos</span>
+                        </div>
+                        <span class="font-bold text-2xl text-gray-900">{{ stats.paises_favoritos }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-eye text-blue-500"></i>
+                            </div>
+                            <span class="text-gray-700">Países Visitados</span>
+                        </div>
+                        <span class="font-bold text-2xl text-gray-900">{{ stats.paises_visitados }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bookmark text-green-500"></i>
+                            </div>
+                            <span class="text-gray-700">Total Favoritos</span>
+                        </div>
+                        <span class="font-bold text-2xl text-gray-900">{{ stats.favoritos_count }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-history text-purple-500"></i>
+                            </div>
+                            <span class="text-gray-700">Consultas</span>
+                        </div>
+                        <span class="font-bold text-2xl text-gray-900">{{ stats.historial_count }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Países Más Consultados -->
+            {% if paises_populares %}
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Países Más Consultados</h3>
+                
+                <div class="space-y-4">
+                    {% for pais in paises_populares %}
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                {{ forloop.counter }}
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ pais.pais__nombre }}</p>
+                                <p class="text-sm text-gray-500">{{ pais.visitas }} visita{{ pais.visitas|pluralize }}</p>
+                            </div>
+                        </div>
+                        <a href="{% url 'assistant:pais_detail' pais.pais__id|default_if_none:'' %}"
+                           class="text-orange-500 hover:text-orange-600">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Enlaces Rápidos -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Enlaces Rápidos</h3>
+                
+                <div class="space-y-3">
+                    <a href="{% url 'assistant:mis_favoritos' %}" 
+                       class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-heart text-red-500"></i>
+                        <span class="text-gray-700">Mis Favoritos</span>
+                    </a>
+                    
+                    <a href="{% url 'assistant:paises_public' %}" 
+                       class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-globe text-blue-500"></i>
+                        <span class="text-gray-700">Explorar Países</span>
+                    </a>
+                    
+                    <a href="{% url 'assistant:recomendaciones' %}" 
+                       class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-compass text-green-500"></i>
+                        <span class="text-gray-700">Recomendaciones</span>
+                    </a>
+                    
+                    <a href="{% url 'security:logout' %}" 
+                       class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-50 transition-colors text-red-600">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+function showTab(tabName) {
+    // Ocultar todos los contenidos
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.add('hidden'));
+    
+    // Resetear todos los botones
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => {
+        button.classList.remove('text-orange-500', 'border-orange-500');
+        button.classList.add('text-gray-500', 'border-transparent');
+    });
+    
+    // Mostrar contenido activo
+    document.getElementById(tabName + '-content').classList.remove('hidden');
+    
+    // Activar botón
+    const activeButton = document.getElementById(tabName + '-tab');
+    activeButton.classList.remove('text-gray-500', 'border-transparent');
+    activeButton.classList.add('text-orange-500', 'border-orange-500');
+}
+
+// Inicializar tabs
+document.addEventListener('DOMContentLoaded', function() {
+    showTab('favoritos');
+});
+</script>
+{% endblock %}

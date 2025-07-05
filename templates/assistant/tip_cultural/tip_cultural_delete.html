@@ -1,0 +1,167 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Esta acción no se puede deshacer</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Cancelar</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Información del tip a eliminar -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div class="p-6">
+                <!-- Tip info -->
+                <div class="flex items-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-6">
+                        <i class="fas fa-lightbulb text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">{{ object.titulo|default:"Sin título" }}</h3>
+                        <p class="text-gray-600">Tip Cultural</p>
+                        <div class="flex items-center space-x-4 mt-2">
+                            {% if object.destacado %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                                    <i class="fas fa-star mr-1"></i>
+                                    Destacado
+                                </span>
+                            {% endif %}
+                            <span class="text-sm text-gray-500">Orden: {{ object.orden }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido del tip -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-2">Contenido:</h4>
+                    <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{{ object.contenido|truncatewords:50 }}</p>
+                </div>
+
+                <!-- Información relacionada -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-globe text-green-500 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-green-800">País</div>
+                                <div class="text-sm text-green-700">{{ object.pais.nombre|default:"Sin país" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-tag text-orange-500 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-orange-800">Categoría</div>
+                                <div class="text-sm text-orange-700">{{ object.categoria.nombre|default:"Sin categoría" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-user text-purple-500 mr-2"></i>
+                            <div>
+                                <div class="text-sm font-medium text-purple-800">Tipo Viajero</div>
+                                <div class="text-sm text-purple-700">{{ object.tipo_viajero.nombre|default:"General" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advertencia -->
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">¡Atención!</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <p>{{ description }}</p>
+                                <p class="mt-2">Esta acción también eliminará:</p>
+                                <ul class="list-disc list-inside mt-1 space-y-1">
+                                    <li>Todas las referencias en favoritos de usuarios</li>
+                                    <li>El tip no podrá ser recuperado</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas -->
+                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600">{{ object.paises_favoritos.count }}</div>
+                    <div class="text-sm text-blue-600">Usuario{{ object.paises_favoritos.count|pluralize:"s" }} en favoritos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de confirmación -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-6">
+                {% csrf_token %}
+                
+                <!-- Confirmación de eliminación -->
+                <div class="mb-6">
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" 
+                               class="w-4 h-4 text-red-500 focus:ring-red-400 border-gray-300 rounded" 
+                               required 
+                               id="confirm-delete">
+                        <span class="text-sm font-medium text-gray-700">
+                            Confirmo que deseo eliminar permanentemente este tip cultural
+                            {% if object.paises_favoritos.count > 0 %}
+                                y entiendo que será removido de {{ object.paises_favoritos.count }} favorito{{ object.paises_favoritos.count|pluralize:"s" }}
+                            {% endif %}
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex items-center justify-between">
+                    <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Cancelar</span>
+                    </a>
+                    <button type="submit" 
+                            class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl opacity-50 cursor-not-allowed"
+                            disabled
+                            id="delete-button">
+                        <i class="fas fa-trash"></i>
+                        <span>{{ grabar }}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Habilitar botón de eliminar solo cuando se confirme
+    document.getElementById('confirm-delete').addEventListener('change', function() {
+        const deleteButton = document.getElementById('delete-button');
+        if (this.checked) {
+            deleteButton.disabled = false;
+            deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            deleteButton.disabled = true;
+            deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+</script>
+{% endblock %}

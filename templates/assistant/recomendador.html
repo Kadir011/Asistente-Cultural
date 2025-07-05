@@ -1,0 +1,583 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative bg-gradient-to-r from-orange-600 to-orange-800 text-white py-20">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('{% static "images/recommendations-hero-bg.jpg" %}');"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6">
+            <i class="fas fa-compass mr-4"></i>{{ title }}
+        </h1>
+        <p class="text-xl md:text-2xl text-orange-100 max-w-4xl mx-auto leading-relaxed mb-8">
+            Descubre tips culturales personalizados para tu próximo destino. Selecciona tu país y tipo de viaje para obtener recomendaciones auténticas.
+        </p>
+        
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
+                <div class="text-2xl font-bold">{{ paises.count }}+</div>
+                <div class="text-orange-100 text-sm">Países</div>
+            </div>
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
+                <div class="text-2xl font-bold">{{ tipos_viajero.count }}+</div>
+                <div class="text-orange-100 text-sm">Tipos de Viaje</div>
+            </div>
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
+                <div class="text-2xl font-bold">1000+</div>
+                <div class="text-orange-100 text-sm">Tips Culturales</div>
+            </div>
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
+                <div class="text-2xl font-bold">98%</div>
+                <div class="text-orange-100 text-sm">Satisfacción</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="py-12 bg-white shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <form method="GET" id="recommendationForm" class="space-y-6">
+            <!-- Form Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Personaliza tus Recomendaciones</h2>
+                <p class="text-lg text-gray-600">Cuéntanos sobre tu viaje para ofrecerte los mejores consejos culturales</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Country Selection -->
+                <div class="bg-gray-50 rounded-2xl p-6">
+                    <label for="pais" class="block text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-globe text-orange-500 mr-2"></i>
+                        ¿A qué país viajas?
+                    </label>
+                    <select name="pais" id="pais" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-lg">
+                        <option value="">Selecciona un país</option>
+                        {% for pais in paises %}
+                            <option value="{{ pais.id }}" 
+                                    {% if request.GET.pais == pais.id|stringformat:"s" %}selected{% endif %}
+                                    data-capital="{{ pais.capital }}" 
+                                    data-idioma="{{ pais.idioma_oficial.nombre|default:'No especificado' }}"
+                                    data-moneda="{{ pais.moneda }}">
+                                {{ pais.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <!-- Country Info Preview -->
+                    <div id="countryInfo" class="mt-4 p-4 bg-white rounded-lg border border-gray-200 hidden">
+                        <h4 class="font-semibold text-gray-900 mb-2">Información del País:</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-gray-600">
+                            <div><strong>Capital:</strong> <span id="countryCapital">-</span></div>
+                            <div><strong>Idioma:</strong> <span id="countryLanguage">-</span></div>
+                            <div><strong>Moneda:</strong> <span id="countryCurrency">-</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Traveler Type Selection -->
+                <div class="bg-gray-50 rounded-2xl p-6">
+                    <label for="tipo_viajero" class="block text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-suitcase text-orange-500 mr-2"></i>
+                        ¿Qué tipo de viajero eres?
+                    </label>
+                    <select name="tipo_viajero" id="tipo_viajero" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-lg">
+                        <option value="">Selecciona tu tipo de viaje</option>
+                        {% for tipo in tipos_viajero %}
+                            <option value="{{ tipo.id }}" 
+                                    {% if request.GET.tipo_viajero == tipo.id|stringformat:"s" %}selected{% endif %}
+                                    data-description="{{ tipo.descripcion }}">
+                                {% if tipo.icono %}<i class="{{ tipo.icono }}"></i>{% endif %} {{ tipo.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <!-- Traveler Type Description -->
+                    <div id="travelerInfo" class="mt-4 p-4 bg-white rounded-lg border border-gray-200 hidden">
+                        <p class="text-sm text-gray-600" id="travelerDescription"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center pt-6">
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button type="submit" 
+                            class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-magic mr-2"></i>Obtener Recomendaciones
+                    </button>
+                    
+                    {% if request.GET.pais or request.GET.tipo_viajero %}
+                    <a href="{% url 'assistant:recomendaciones' %}" 
+                       class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200">
+                        <i class="fas fa-refresh mr-2"></i>Limpiar Filtros
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Recommendations Results -->
+{% if tips_culturales %}
+<div class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Results Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-lightbulb text-orange-500 mr-3"></i>
+                Tus Recomendaciones Personalizadas
+            </h2>
+            <p class="text-xl text-gray-600">
+                Encontramos {{ tips_culturales|length }} tip{{ tips_culturales|length|pluralize }} cultural{{ tips_culturales|length|pluralize:"es" }} 
+                {% if request.GET.pais %}para tu viaje{% endif %}
+                {% if request.GET.tipo_viajero %}como viajero {{ tipos_viajero|first }}{% endif %}
+            </p>
+        </div>
+
+        <!-- Tips Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for tip in tips_culturales %}
+            <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                <!-- Tip Header -->
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 text-white">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            {% if tip.categoria.icono %}
+                                <i class="{{ tip.categoria.icono }} text-2xl mr-3"></i>
+                            {% else %}
+                                <i class="fas fa-lightbulb text-2xl mr-3"></i>
+                            {% endif %}
+                            <span class="font-semibold">{{ tip.categoria.nombre }}</span>
+                        </div>
+                        
+                        {% if user.is_authenticated %}
+                        <button onclick="toggleFavorite({{ tip.id }})" 
+                                class="{% if tip.id in favoritos_ids %}bg-red-500 hover:bg-red-600 text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-600{% endif %} p-2 rounded-lg transition-colors favorite-btn" 
+                                data-tip-id="{{ tip.id }}"
+                                title="{% if tip.id in favoritos_ids %}Quitar de favoritos{% else %}Agregar a favoritos{% endif %}">
+                            <i class="{% if tip.id in favoritos_ids %}fas fa-heart{% else %}far fa-heart{% endif %} text-xl"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    {% if tip.titulo %}
+                    <h3 class="text-xl font-bold mb-2">{{ tip.titulo }}</h3>
+                    {% endif %}
+                </div>
+
+                <!-- Tip Content -->
+                <div class="p-6">
+                    <p class="text-gray-700 leading-relaxed mb-4">{{ tip.contenido }}</p>
+                    
+                    <!-- Tip Meta Information -->
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-1"></i>
+                            <span>{{ tip.pais.nombre }}</span>
+                        </div>
+                        {% if tip.tipo_viajero %}
+                        <div class="flex items-center">
+                            <i class="fas fa-user mr-1"></i>
+                            <span>{{ tip.tipo_viajero.nombre }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tip Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                        {% if tip.destacado %}
+                        <span class="bg-orange-100 text-orange-800 text-xs px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-star mr-1"></i>Destacado
+                        </span>
+                        {% else %}
+                        <div></div>
+                        {% endif %}
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="shareTip({{ tip.id }})" 
+                                    class="text-gray-400 hover:text-blue-500 transition-colors" 
+                                    title="Compartir tip">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <a href="{% url 'assistant:pais_detail' tip.pais.id %}" 
+                               class="text-gray-400 hover:text-orange-500 transition-colors" 
+                               title="Ver país">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Load More Button -->
+        {% if tips_culturales|length >= 6 %}
+        <div class="text-center mt-12">
+            <button onclick="loadMoreTips()" 
+                    class="bg-orange-100 hover:bg-orange-200 text-orange-700 font-semibold py-3 px-8 rounded-lg transition-colors">
+                <i class="fas fa-plus mr-2"></i>Cargar Más Tips
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Related Suggestions -->
+<div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">¿Te Interesa Explorar Más?</h2>
+            <p class="text-lg text-gray-600">Descubre otros destinos y tipos de viaje que podrían gustarte</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Related Countries -->
+            <div class="bg-gray-50 rounded-2xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-globe text-orange-500 mr-3"></i>
+                    Países Similares
+                </h3>
+                
+                <div class="space-y-4">
+                    {% for pais in paises|slice:":4" %}
+                    {% if pais.id != request.GET.pais|add:0 %}
+                    <a href="?pais={{ pais.id }}{% if request.GET.tipo_viajero %}&tipo_viajero={{ request.GET.tipo_viajero }}{% endif %}" 
+                       class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-orange-200 transition-colors">
+                            <i class="fas fa-flag text-orange-600"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">{{ pais.nombre }}</div>
+                            <div class="text-sm text-gray-500">{{ pais.tip_culturals.count }} tips disponibles</div>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Related Travel Types -->
+            <div class="bg-gray-50 rounded-2xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-suitcase text-orange-500 mr-3"></i>
+                    Otros Tipos de Viaje
+                </h3>
+                
+                <div class="space-y-4">
+                    {% for tipo in tipos_viajero|slice:":4" %}
+                    {% if tipo.id != request.GET.tipo_viajero|add:0 %}
+                    <a href="?tipo_viajero={{ tipo.id }}{% if request.GET.pais %}&pais={{ request.GET.pais }}{% endif %}" 
+                       class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
+                            {% if tipo.icono %}
+                                <i class="{{ tipo.icono }} text-blue-600"></i>
+                            {% else %}
+                                <i class="fas fa-user text-blue-600"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">{{ tipo.nombre }}</div>
+                            <div class="text-sm text-gray-500">{{ tipo.tip_culturals.count }} tips disponibles</div>
+                        </div>
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- Empty State / Initial State -->
+<div class="py-16 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- If filters applied but no results -->
+        {% if request.GET.pais or request.GET.tipo_viajero %}
+        <div class="bg-white rounded-2xl shadow-lg p-12">
+            <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-search text-yellow-600 text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">No encontramos tips para tu búsqueda</h3>
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                No hay tips culturales disponibles para la combinación seleccionada. 
+                Intenta con otros filtros o explora nuestros países disponibles.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="{% url 'assistant:recomendaciones' %}" 
+                   class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    <i class="fas fa-refresh mr-2"></i>Limpiar Filtros
+                </a>
+                <a href="{% url 'assistant:paises_public' %}" 
+                   class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors">
+                    <i class="fas fa-globe mr-2"></i>Explorar Países
+                </a>
+            </div>
+        </div>
+        
+        <!-- Initial State -->
+        {% else %}
+        <div class="bg-white rounded-2xl shadow-lg p-12">
+            <div class="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-compass text-orange-600 text-3xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">¡Comienza tu Aventura Cultural!</h3>
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                Selecciona tu destino y tipo de viaje para recibir recomendaciones culturales personalizadas. 
+                Nuestros expertos locales han preparado consejos únicos para cada combinación.
+            </p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-map text-blue-600 text-2xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Elige tu Destino</h4>
+                    <p class="text-gray-500 text-sm text-center">Selecciona el país que planeas visitar</p>
+                </div>
+                
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-user text-green-600 text-2xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Define tu Estilo</h4>
+                    <p class="text-gray-500 text-sm text-center">Indica qué tipo de viajero eres</p>
+                </div>
+                
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-lightbulb text-purple-600 text-2xl"></i>
+                    </div>
+                    <h4 class="font-semibold text-gray-900 mb-1">Recibe Tips</h4>
+                    <p class="text-gray-500 text-sm text-center">Obtén consejos culturales personalizados</p>
+                </div>
+            </div>
+            
+            <a href="#recommendationForm" 
+               class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors">
+                <i class="fas fa-arrow-up mr-2"></i>Comenzar Ahora
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Country selection change handler
+    const countrySelect = document.getElementById('pais');
+    const countryInfo = document.getElementById('countryInfo');
+    
+    countrySelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        
+        if (selectedOption.value) {
+            const capital = selectedOption.dataset.capital;
+            const idioma = selectedOption.dataset.idioma;
+            const moneda = selectedOption.dataset.moneda;
+            
+            document.getElementById('countryCapital').textContent = capital || 'No especificado';
+            document.getElementById('countryLanguage').textContent = idioma || 'No especificado';
+            document.getElementById('countryCurrency').textContent = moneda || 'No especificado';
+            
+            countryInfo.classList.remove('hidden');
+        } else {
+            countryInfo.classList.add('hidden');
+        }
+    });
+
+    // Traveler type selection change handler
+    const travelerSelect = document.getElementById('tipo_viajero');
+    const travelerInfo = document.getElementById('travelerInfo');
+    
+    travelerSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        
+        if (selectedOption.value) {
+            const description = selectedOption.dataset.description;
+            document.getElementById('travelerDescription').textContent = description || 'Tipo de viajero seleccionado';
+            travelerInfo.classList.remove('hidden');
+        } else {
+            travelerInfo.classList.add('hidden');
+        }
+    });
+
+    // Trigger change events on page load for pre-selected values
+    if (countrySelect.value) {
+        countrySelect.dispatchEvent(new Event('change'));
+    }
+    if (travelerSelect.value) {
+        travelerSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Auto-submit form when both selects have values
+    function checkAutoSubmit() {
+        if (countrySelect.value && travelerSelect.value) {
+            // Optional: Auto-submit after a short delay
+            // setTimeout(() => document.getElementById('recommendationForm').submit(), 500);
+        }
+    }
+
+    countrySelect.addEventListener('change', checkAutoSubmit);
+    travelerSelect.addEventListener('change', checkAutoSubmit);
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+
+// Toggle favorite functionality
+async function toggleFavorite(tipId) {
+    {% if user.is_authenticated %}
+        try {
+            const button = event.target.closest('button');
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            button.disabled = true;
+
+            const response = await fetch(`{% url 'assistant:add_favorite' 0 %}`.replace('0', tipId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                updateFavoriteButton(button, data.is_favorite);
+                showNotification(data.message, 'success');
+            } else {
+                showNotification(data.message, 'error');
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error al procesar la solicitud', 'error');
+            const button = event.target.closest('button');
+            button.innerHTML = originalContent;
+            button.disabled = false;
+        }
+    {% else %}
+        showNotification('Debes iniciar sesión para guardar favoritos', 'warning');
+        setTimeout(() => {
+            window.location.href = '{% url "security:login" %}';
+        }, 2000);
+    {% endif %}
+}
+
+function updateFavoriteButton(button, isFavorite) {
+    if (isFavorite) {
+        button.className = 'bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-colors favorite-btn';
+        button.innerHTML = '<i class="fas fa-heart text-xl"></i>';
+        button.title = 'Quitar de favoritos';
+    } else {
+        button.className = 'bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-colors favorite-btn';
+        button.innerHTML = '<i class="far fa-heart text-xl"></i>';
+        button.title = 'Agregar a favoritos';
+    }
+    button.disabled = false;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Share tip functionality
+function shareTip(tipId) {
+    const tip = document.querySelector(`[data-tip-id="${tipId}"]`).closest('.bg-white');
+    const tipTitle = tip.querySelector('h3')?.textContent || 'Tip Cultural';
+    const tipContent = tip.querySelector('p').textContent.substring(0, 100) + '...';
+    
+    if (navigator.share) {
+        navigator.share({
+            title: tipTitle,
+            text: tipContent,
+            url: window.location.href
+        });
+    } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showNotification('Enlace copiado al portapapeles', 'success');
+        });
+    }
+}
+
+// Load more tips functionality
+function loadMoreTips() {
+    // This would typically make an AJAX request to load more tips
+    showNotification('Función de cargar más tips - Implementar según necesidades', 'info');
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+    
+    const bgColors = {
+        'success': 'bg-green-500 text-white',
+        'error': 'bg-red-500 text-white',
+        'warning': 'bg-yellow-500 text-black',
+        'info': 'bg-blue-500 text-white'
+    };
+    
+    notification.className += ` ${bgColors[type] || bgColors.info}`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-current opacity-70 hover:opacity-100">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+</script>
+{% endblock %}

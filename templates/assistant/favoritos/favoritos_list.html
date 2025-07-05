@@ -1,0 +1,277 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-heart text-red-600 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Gestiona los tips culturales marcados como favoritos por los usuarios</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex space-x-3">
+                    <a href="{{ create_url }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-plus"></i>
+                        <span>Añadir Favorito</span>
+                    </a>
+                    {% if request.user.is_superuser and favoritos %}
+                        <form method="post" action="{% url 'assistant:favoritos_clear' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar todos los favoritos?')" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                                <i class="fas fa-trash"></i>
+                                <span>Limpiar Todo</span>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Búsqueda -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <form method="GET" class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ request.GET.q }}" 
+                           placeholder="Buscar por usuario, país o tip cultural..."
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition-all duration-200">
+                </div>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar</span>
+                </button>
+                {% if request.GET.q %}
+                    <a href="{% url 'assistant:favoritos_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Limpiar</span>
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Lista de favoritos -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            {% if favoritos %}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+                    {% for favorito in favoritos %}
+                        <div class="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200 group bg-gradient-to-br from-red-50 to-pink-50">
+                            <!-- Header del favorito -->
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-heart text-white text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">{{ favorito.usuario.get_full_name|default:favorito.usuario.username }}</h3>
+                                        <p class="text-sm text-gray-500">{{ favorito.fecha_guardado|date:"d M Y H:i" }}</p>
+                                    </div>
+                                </div>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    Favorito
+                                </span>
+                            </div>
+
+                            <!-- Información del usuario -->
+                            <div class="mb-4">
+                                <div class="bg-white rounded-lg p-4 border border-red-200">
+                                    <div class="flex items-center mb-2">
+                                        <i class="fas fa-user text-red-500 mr-2"></i>
+                                        <span class="text-sm font-medium text-red-800">Usuario</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-red-200 rounded-full flex items-center justify-center mr-3">
+                                            <span class="text-red-700 font-bold text-sm">{{ favorito.usuario.username|first|upper }}</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">{{ favorito.usuario.get_full_name|default:favorito.usuario.username }}</div>
+                                            <div class="text-sm text-gray-500">{{ favorito.usuario.email }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tip cultural favorito -->
+                            <div class="mb-4">
+                                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                    <div class="flex items-center mb-3">
+                                        <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+                                        <span class="text-sm font-medium text-blue-800">Tip Cultural</span>
+                                    </div>
+                                    
+                                    <!-- Título del tip -->
+                                    <h4 class="font-semibold text-blue-900 mb-2">{{ favorito.tip.titulo|default:"Sin título" }}</h4>
+                                    
+                                    <!-- Contenido del tip -->
+                                    <p class="text-blue-800 text-sm mb-3">{{ favorito.tip.contenido|truncatewords:15 }}</p>
+                                    
+                                    <!-- Metadatos del tip -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-globe text-green-500 mr-1"></i>
+                                            <span class="text-gray-600">{{ favorito.tip.pais.nombre|default:"Sin país" }}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-tag text-orange-500 mr-1"></i>
+                                            <span class="text-gray-600">{{ favorito.tip.categoria.nombre|default:"Sin categoría" }}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-user text-purple-500 mr-1"></i>
+                                            <span class="text-gray-600">{{ favorito.tip.tipo_viajero.nombre|default:"General" }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if favorito.tip.destacado %}
+                                        <div class="mt-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                                                <i class="fas fa-star mr-1"></i>
+                                                Destacado
+                                            </span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Fecha de guardado -->
+                            <div class="mb-4">
+                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-calendar text-gray-500 mr-2"></i>
+                                            <span class="text-sm font-medium text-gray-700">Guardado</span>
+                                        </div>
+                                        <span class="text-sm text-gray-600">{{ favorito.fecha_guardado|timesince }} atrás</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'assistant:favoritos_update' favorito.pk %}" 
+                                   class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200 text-center">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Editar
+                                </a>
+                                <a href="{% url 'assistant:favoritos_delete' favorito.pk %}" 
+                                   class="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200 text-center">
+                                    <i class="fas fa-trash mr-1"></i>
+                                    Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-700">
+                                Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} favoritos
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                {% if page_obj.has_previous %}
+                                    <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Primera
+                                    </a>
+                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Anterior
+                                    </a>
+                                {% endif %}
+                                
+                                <span class="px-3 py-2 bg-red-600 text-white rounded-lg text-sm">
+                                    {{ page_obj.number }}
+                                </span>
+                                
+                                {% if page_obj.has_next %}
+                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Siguiente
+                                    </a>
+                                    <a href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Última
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay favoritos registrados</h3>
+                    {% if request.GET.q %}
+                        <p class="text-gray-500 mb-4">No se encontraron favoritos que coincidan con "{{ request.GET.q }}"</p>
+                        <a href="{% url 'assistant:favoritos_list' %}" class="text-red-600 hover:text-red-700">Ver todos los favoritos</a>
+                    {% else %}
+                        <p class="text-gray-500 mb-4">Los usuarios aún no han marcado tips como favoritos</p>
+                        <a href="{{ create_url }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors duration-200">
+                            Crear primer favorito
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Estadísticas -->
+        {% if favoritos %}
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white rounded-lg p-4 text-center border-l-4 border-red-600">
+                    <div class="text-2xl font-bold text-red-600">{{ favoritos|length }}</div>
+                    <div class="text-sm text-gray-600">Total favoritos</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center border-l-4 border-blue-500">
+                    <div class="text-2xl font-bold text-blue-600">{% regroup favoritos by usuario as usuarios_list %}{{ usuarios_list|length }}</div>
+                    <div class="text-sm text-gray-600">Usuarios únicos</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center border-l-4 border-green-500">
+                    <div class="text-2xl font-bold text-green-600">{% regroup favoritos by tip.pais as paises_list %}{{ paises_list|length }}</div>
+                    <div class="text-sm text-gray-600">Países</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center border-l-4 border-purple-500">
+                    <div class="text-2xl font-bold text-purple-600">
+                        {% for favorito in favoritos %}{% if favorito.tip.destacado %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}
+                    </div>
+                    <div class="text-sm text-gray-600">Tips destacados</div>
+                </div>
+            </div>
+
+            <!-- Top usuarios con más favoritos -->
+            <div class="mt-4 bg-white rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Usuarios más activos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% regroup favoritos by usuario as favoritos_por_usuario %}
+                    {% for usuario_group in favoritos_por_usuario|slice:":3" %}
+                        <div class="text-center p-4 bg-red-50 rounded-lg">
+                            <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <span class="text-white font-bold">{{ usuario_group.grouper.username|first|upper }}</span>
+                            </div>
+                            <div class="font-medium text-gray-900">{{ usuario_group.grouper.get_full_name|default:usuario_group.grouper.username }}</div>
+                            <div class="text-sm text-red-600">{{ usuario_group.list|length }} favorito{{ usuario_group.list|length|pluralize:"s" }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Botón volver -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'assistant:menu' %}" class="inline-flex items-center text-gray-600 hover:text-red-600 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Volver al menú principal
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

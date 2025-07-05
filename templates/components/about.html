@@ -1,0 +1,339 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative bg-gradient-to-r from-orange-600 to-orange-800 text-white py-20">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('{% static "img/about-hero-bg.jpg" %}');"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6">
+            <i class="fas fa-globe-americas mr-4"></i>Acerca de TravelWorld
+        </h1>
+        <p class="text-xl md:text-2xl text-orange-100 max-w-4xl mx-auto leading-relaxed">
+            Conectamos viajeros con culturas del mundo a través de experiencias auténticas y consejos locales
+        </p>
+    </div>
+</div>
+
+<!-- Mission Section -->
+<div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">Nuestra Misión</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    En TravelWorld creemos que viajar va más allá de visitar lugares. Se trata de conectar con culturas, 
+                    entender tradiciones y crear experiencias que transformen la manera en que vemos el mundo.
+                </p>
+                <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+                    Nuestra plataforma reúne la sabiduría local de cada destino y la pone al alcance de viajeros curiosos 
+                    que buscan experiencias auténticas y respetuosas con las comunidades locales.
+                </p>
+                
+                <!-- Mission Stats -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="text-center p-4 bg-orange-50 rounded-lg">
+                        <div class="text-3xl font-bold text-orange-600 mb-2">50+</div>
+                        <div class="text-gray-700 font-medium">Países</div>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 rounded-lg">
+                        <div class="text-3xl font-bold text-orange-600 mb-2">1000+</div>
+                        <div class="text-gray-700 font-medium">Tips Culturales</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <img src="{% static 'img/mission-image.jpg' %}" 
+                     alt="Nuestra Misión" 
+                     class="rounded-2xl shadow-2xl w-full h-96 object-cover">
+                <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-orange-500 rounded-full flex items-center justify-center shadow-xl">
+                    <i class="fas fa-heart text-white text-4xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Values Section -->
+<div class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestros Valores</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Los principios que guían cada decisión y cada experiencia que creamos para nuestros viajeros
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Value 1 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
+                <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-handshake text-orange-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Respeto Cultural</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Promovemos el turismo responsable que honra y respeta las tradiciones, costumbres y comunidades locales de cada destino.
+                </p>
+            </div>
+
+            <!-- Value 2 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-compass text-blue-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Experiencias Auténticas</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Conectamos viajeros con experiencias genuinas, alejadas del turismo masivo, para descubrir la verdadera esencia de cada lugar.
+                </p>
+            </div>
+
+            <!-- Value 3 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-leaf text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Sostenibilidad</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Fomentamos prácticas de viaje sostenibles que preserven el medio ambiente y beneficien a las comunidades locales.
+                </p>
+            </div>
+
+            <!-- Value 4 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
+                <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-users text-purple-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Comunidad Global</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Construimos puentes entre culturas, creando una comunidad global de viajeros conscientes y respetuosos.
+                </p>
+            </div>
+
+            <!-- Value 5 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-lightbulb text-red-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Innovación</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Utilizamos tecnología innovadora para hacer que la información cultural sea accesible, personalizada y relevante.
+                </p>
+            </div>
+
+            <!-- Value 6 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow text-center">
+                <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-shield-alt text-yellow-600 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Confianza</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Proporcionamos información verificada y consejos confiables de expertos locales y viajeros experimentados.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Story Section -->
+<div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1">
+                <img src="{% static 'img/story-image.jpg' %}" 
+                     alt="Nuestra Historia" 
+                     class="rounded-2xl shadow-2xl w-full h-96 object-cover">
+            </div>
+            
+            <div class="order-1 lg:order-2">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">Nuestra Historia</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    TravelWorld nació de una simple observación: los mejores consejos de viaje no vienen de guías turísticas, 
+                    sino de personas locales que conocen su cultura de primera mano.
+                </p>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    Fundada en 2023 por un equipo de viajeros apasionados y desarrolladores comprometidos, nuestra plataforma 
+                    ha crecido hasta convertirse en una comunidad global donde la sabiduría local se encuentra con la curiosidad viajera.
+                </p>
+                <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+                    Cada tip cultural, cada frase útil y cada recomendación en nuestra plataforma ha sido cuidadosamente 
+                    curada para asegurar que tu próxima aventura sea más que un viaje: sea una transformación.
+                </p>
+
+                <!-- Timeline -->
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-orange-500 rounded-full mr-4"></div>
+                        <div>
+                            <div class="font-semibold text-gray-900">2023</div>
+                            <div class="text-gray-600">Fundación de TravelWorld</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-orange-500 rounded-full mr-4"></div>
+                        <div>
+                            <div class="font-semibold text-gray-900">2024</div>
+                            <div class="text-gray-600">Expansión a 25 países</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-orange-500 rounded-full mr-4"></div>
+                        <div>
+                            <div class="font-semibold text-gray-900">2025</div>
+                            <div class="text-gray-600">Comunidad de 10,000+ viajeros</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Team Section -->
+<div class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Conoce Nuestro Equipo</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Viajeros, desarrolladores y apasionados de la cultura trabajando juntos para crear experiencias inolvidables
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Team Member 1 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+                <img src="{% static 'img/team/team-1.jpg' %}" 
+                     alt="Kadir Barquet" 
+                     class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Kadir Barquet</h3>
+                <p class="text-orange-600 font-medium mb-3">Desarrollador Back-End</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Encargado de la gestión de la plataforma web, desarrollador de aplicaciones y administrador de sistemas.
+                </p>
+                <div class="flex justify-center space-x-3">
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+                <img src="{% static 'img/team/team-2.jpg' %}" 
+                     alt="Carlos Landívar" 
+                     class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Carlos Landívar</h3>
+                <p class="text-orange-600 font-medium mb-3">Diseñador Web</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Diseñador Web con experiencia en diseño de interfaces y experiencia de usuario.
+                </p>
+                <div class="flex justify-center space-x-3">
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+                <img src="{% static 'img/team/team-3.jpg' %}" 
+                     alt="Dabor García" 
+                     class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Dabor García</h3>
+                <p class="text-orange-600 font-medium mb-3">Documentador</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Encargado de la documentación del sistema y la creación de contenido para la plataforma web.
+                </p>
+                <div class="flex justify-center space-x-3">
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Team Member 4 -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg text-center">
+                <img src="{% static 'img/team/team-4.jpg' %}" 
+                     alt="Daniel Espinoza" 
+                     class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Daniel Espinoza</h3>
+                <p class="text-orange-600 font-medium mb-3">Desarrollador Front-End</p>
+                <p class="text-gray-600 text-sm mb-4">
+                    Encargado de la creación de la interfaz de usuario y la gestión de la plataforma web.
+                </p>
+                <div class="flex justify-center space-x-3">
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-orange-500 transition-colors">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="py-16 bg-gradient-to-r from-orange-600 to-orange-800 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-bold mb-4">¿Listo para tu próxima aventura?</h2>
+        <p class="text-xl text-orange-100 mb-8 leading-relaxed">
+            Únete a nuestra comunidad de viajeros conscientes y descubre el mundo de una manera completamente nueva
+        </p>
+        
+        <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <a href="{% url 'assistant:paises_public' %}" 
+               class="bg-white text-orange-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg">
+                <i class="fas fa-globe mr-2"></i>Explorar Países
+            </a>
+            
+            <a href="{% url 'assistant:recomendaciones' %}" 
+               class="bg-orange-500 hover:bg-orange-400 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors shadow-lg">
+                <i class="fas fa-compass mr-2"></i>Obtener Recomendaciones
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Fun Facts -->
+<div class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+                <div class="text-4xl font-bold text-orange-600 mb-2">500K+</div>
+                <div class="text-gray-600">Viajeros Alcanzados</div>
+            </div>
+            <div>
+                <div class="text-4xl font-bold text-orange-600 mb-2">98%</div>
+                <div class="text-gray-600">Satisfacción</div>
+            </div>
+            <div>
+                <div class="text-4xl font-bold text-orange-600 mb-2">24/7</div>
+                <div class="text-gray-600">Soporte</div>
+            </div>
+            <div>
+                <div class="text-4xl font-bold text-orange-600 mb-2">150+</div>
+                <div class="text-gray-600">Colaboradores Locales</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
+
+
+
+

@@ -1,0 +1,529 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="relative bg-gradient-to-r from-orange-600 to-orange-800 text-white py-20">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('{% static "img/contact-hero-bg.jpg" %}');"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6">
+            <i class="fas fa-envelope mr-4"></i>Contáctanos
+        </h1>
+        <p class="text-xl md:text-2xl text-orange-100 max-w-4xl mx-auto leading-relaxed">
+            ¿Tienes preguntas, sugerencias o quieres colaborar con nosotros? Nos encantaría escucharte
+        </p>
+    </div>
+</div>
+
+<!-- Contact Content -->
+<div class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Contact Form -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Envíanos un Mensaje</h2>
+                    <p class="text-gray-600">
+                        Completa el formulario y nos pondremos en contacto contigo lo antes posible. 
+                        Valoramos cada mensaje y feedback de nuestra comunidad.
+                    </p>
+                </div>
+
+                <!-- Success/Error Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-6 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-50 border border-green-200 text-green-800{% else %}bg-red-50 border border-red-200 text-red-800{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>
+                            {{ message }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Form Errors -->
+                    {% if form.errors %}
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                            <div class="flex items-center text-red-800 mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                <span class="font-medium">Por favor corrige los siguientes errores:</span>
+                            </div>
+                            <ul class="list-disc list-inside text-red-700 text-sm space-y-1">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <!-- Name Field -->
+                    <div>
+                        <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-user mr-1"></i>{{ form.nombre.label }}
+                        </label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.nombre.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email Field -->
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-envelope mr-1"></i>{{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Subject Field -->
+                    <div>
+                        <label for="{{ form.asunto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tag mr-1"></i>{{ form.asunto.label }}
+                        </label>
+                        {{ form.asunto }}
+                        {% if form.asunto.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.asunto.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Message Field -->
+                    <div>
+                        <label for="{{ form.mensaje.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-comment mr-1"></i>{{ form.mensaje.label }}
+                        </label>
+                        {{ form.mensaje }}
+                        {% if form.mensaje.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.mensaje.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button type="submit" 
+                                class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-paper-plane mr-2"></i>Enviar Mensaje
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Additional Info -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <p class="text-sm text-gray-500 text-center">
+                        <i class="fas fa-shield-alt mr-1"></i>
+                        Tu información está protegida. No compartimos datos personales con terceros.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="space-y-8">
+                <!-- Contact Cards -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Información de Contacto</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Email -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-envelope text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-semibold text-gray-900">Email</h4>
+                                <p class="text-gray-600">kbarquetb@unemi.edu.ec</p>
+                                <p class="text-sm text-gray-500">Respuesta en 24 horas</p>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-phone text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-semibold text-gray-900">Teléfono</h4>
+                                <p class="text-gray-600">+593 99 123 4567</p>
+                                <p class="text-sm text-gray-500">Lun - Vie: 9:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-semibold text-gray-900">Oficina</h4>
+                                <p class="text-gray-600">Milagro, Guayas, Ecuador</p>
+                                <p class="text-sm text-gray-500">Universidad Estatal de Milagro</p>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-share-alt text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-semibold text-gray-900">Redes Sociales</h4>
+                                <div class="flex space-x-3 mt-2">
+                                    <a href="#" class="text-gray-400 hover:text-blue-600 transition-colors">
+                                        <i class="fab fa-facebook text-xl"></i>
+                                    </a>
+                                    <a href="#" class="text-gray-400 hover:text-blue-400 transition-colors">
+                                        <i class="fab fa-twitter text-xl"></i>
+                                    </a>
+                                    <a href="#" class="text-gray-400 hover:text-pink-600 transition-colors">
+                                        <i class="fab fa-instagram text-xl"></i>
+                                    </a>
+                                    <a href="#" class="text-gray-400 hover:text-blue-800 transition-colors">
+                                        <i class="fab fa-linkedin text-xl"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Preguntas Frecuentes</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="border-b border-gray-200 pb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">¿Cómo puedo agregar mi país a la plataforma?</h4>
+                            <p class="text-gray-600 text-sm">Puedes contactarnos directamente para proponer nuevos destinos. Valoramos especialmente contenido auténtico de personas locales.</p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">¿Cómo verifican la información cultural?</h4>
+                            <p class="text-gray-600 text-sm">Trabajamos con expertos locales y viajeros experimentados para verificar todos nuestros tips culturales antes de publicarlos.</p>
+                        </div>
+                        
+                        <div class="border-b border-gray-200 pb-4">
+                            <h4 class="font-semibold text-gray-900 mb-2">¿Puedo colaborar como guía local?</h4>
+                            <p class="text-gray-600 text-sm">¡Por supuesto! Siempre estamos buscando colaboradores locales. Escríbenos con el asunto "Colaboración Local".</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">¿La plataforma es gratuita?</h4>
+                            <p class="text-gray-600 text-sm">Sí, TravelWorld es completamente gratuito. Nuestro objetivo es hacer la información cultural accesible para todos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Contact Options -->
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-8 text-white">
+                    <h3 class="text-2xl font-bold mb-4">¿Necesitas ayuda rápida?</h3>
+                    <p class="text-orange-100 mb-6">
+                        Para consultas urgentes o soporte técnico, estas opciones te pueden ayudar inmediatamente:
+                    </p>
+                    
+                    <div class="space-y-3">
+                        <a href="{% url 'assistant:home' %}" 
+                           class="flex items-center text-white hover:text-orange-200 transition-colors">
+                            <i class="fas fa-home mr-3"></i>
+                            <span>Visitar Centro de Ayuda</span>
+                        </a>
+                        
+                        <a href="{% url 'assistant:paises_public' %}" 
+                           class="flex items-center text-white hover:text-orange-200 transition-colors">
+                            <i class="fas fa-search mr-3"></i>
+                            <span>Buscar Información de Países</span>
+                        </a>
+                        
+                        <a href="{% url 'assistant:recomendaciones' %}" 
+                           class="flex items-center text-white hover:text-orange-200 transition-colors">
+                            <i class="fas fa-compass mr-3"></i>
+                            <span>Obtener Recomendaciones Personalizadas</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Location Map -->
+<div class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Nuestra Ubicación</h2>
+            <p class="text-xl text-gray-600">
+                Nos encontramos en el corazón de Ecuador, desde donde coordinamos experiencias culturales globales
+            </p>
+        </div>
+
+        <div class="bg-gray-100 rounded-2xl p-6">
+            <div class="bg-white rounded-lg overflow-hidden shadow-lg">
+                <iframe 
+                    src="https://maps.google.com/maps?q=Milagro,Guayas,Ecuador&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                    width="100%" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <a href="https://maps.google.com/?q=Milagro,Guayas,Ecuador" 
+                   target="_blank" 
+                   class="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium transition-colors">
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    Abrir en Google Maps
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Methods -->
+<div class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Diferentes Maneras de Contactarnos</h2>
+            <p class="text-xl text-gray-600">
+                Elige la opción que mejor se adapte a tu consulta o preferencia de comunicación
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- General Inquiries -->
+            <div class="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-question-circle text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Consultas Generales</h3>
+                <p class="text-gray-600 text-sm mb-4">Información sobre servicios, destinos y colaboraciones</p>
+                <a href="mailto:info@travelworld.com" 
+                   class="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
+                    info@travelworld.com
+                </a>
+            </div>
+
+            <!-- Technical Support -->
+            <div class="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-cog text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Soporte Técnico</h3>
+                <p class="text-gray-600 text-sm mb-4">Problemas con la plataforma, bugs o sugerencias técnicas</p>
+                <a href="mailto:soporte@travelworld.com" 
+                   class="text-green-600 hover:text-green-800 font-medium text-sm transition-colors">
+                    soporte@travelworld.com
+                </a>
+            </div>
+
+            <!-- Business -->
+            <div class="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-handshake text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Alianzas Comerciales</h3>
+                <p class="text-gray-600 text-sm mb-4">Propuestas de negocio, partnerships y colaboraciones</p>
+                <a href="mailto:negocios@travelworld.com" 
+                   class="text-purple-600 hover:text-purple-800 font-medium text-sm transition-colors">
+                    negocios@travelworld.com
+                </a>
+            </div>
+
+            <!-- Press -->
+            <div class="bg-white rounded-xl p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-newspaper text-red-600 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Prensa y Medios</h3>
+                <p class="text-gray-600 text-sm mb-4">Solicitudes de entrevistas, información para medios</p>
+                <a href="mailto:prensa@travelworld.com" 
+                   class="text-red-600 hover:text-red-800 font-medium text-sm transition-colors">
+                    prensa@travelworld.com
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Response Time Info -->
+<div class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="bg-orange-50 rounded-2xl p-8">
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Tiempos de Respuesta</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">2-4h</div>
+                    <div class="text-gray-700 font-medium">Consultas Urgentes</div>
+                    <div class="text-gray-500 text-sm">Lun - Vie, 9AM - 6PM</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">24h</div>
+                    <div class="text-gray-700 font-medium">Consultas Generales</div>
+                    <div class="text-gray-500 text-sm">Días laborales</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">48h</div>
+                    <div class="text-gray-700 font-medium">Propuestas Comerciales</div>
+                    <div class="text-gray-500 text-sm">Requieren evaluación</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Form Enhancement -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation enhancement
+    const form = document.querySelector('form');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const inputs = form.querySelectorAll('input, textarea');
+
+    // Real-time validation feedback
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+
+        input.addEventListener('input', function() {
+            if (this.classList.contains('border-red-300')) {
+                validateField(this);
+            }
+        });
+    });
+
+    function validateField(field) {
+        const value = field.value.trim();
+        const fieldName = field.name;
+        let isValid = true;
+        let errorMessage = '';
+
+        // Remove existing error styling
+        field.classList.remove('border-red-300', 'border-green-300');
+        
+        // Basic validation
+        if (field.hasAttribute('required') && !value) {
+            isValid = false;
+            errorMessage = 'Este campo es obligatorio';
+        } else if (fieldName === 'email' && value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                isValid = false;
+                errorMessage = 'Ingresa un email válido';
+            }
+        }
+
+        // Apply styling based on validation
+        if (!isValid) {
+            field.classList.add('border-red-300');
+            showFieldError(field, errorMessage);
+        } else if (value) {
+            field.classList.add('border-green-300');
+            removeFieldError(field);
+        }
+
+        return isValid;
+    }
+
+    function showFieldError(field, message) {
+        removeFieldError(field); // Remove any existing error
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error mt-1 text-sm text-red-600';
+        errorDiv.textContent = message;
+        
+        field.parentNode.appendChild(errorDiv);
+    }
+
+    function removeFieldError(field) {
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        let isFormValid = true;
+        
+        inputs.forEach(input => {
+            if (!validateField(input)) {
+                isFormValid = false;
+            }
+        });
+
+        if (isFormValid) {
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
+        }
+    });
+
+    // Auto-resize textarea
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+
+// FAQ toggle functionality
+function toggleFAQ(element) {
+    const content = element.nextElementSibling;
+    const icon = element.querySelector('i');
+    
+    if (content.style.display === 'none' || !content.style.display) {
+        content.style.display = 'block';
+        icon.classList.remove('fa-plus');
+        icon.classList.add('fa-minus');
+    } else {
+        content.style.display = 'none';
+        icon.classList.remove('fa-minus');
+        icon.classList.add('fa-plus');
+    }
+}
+
+// Copy email to clipboard functionality
+function copyEmail(email) {
+    navigator.clipboard.writeText(email).then(function() {
+        // Show success notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        notification.innerHTML = '<i class="fas fa-check mr-2"></i>Email copiado al portapapeles';
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    });
+}
+</script>
+{% endblock %}
+
+
