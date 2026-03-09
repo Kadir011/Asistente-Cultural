@@ -1,0 +1,168 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-language text-purple-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Gestiona los idiomas oficiales de los países</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <a href="{{ create_url }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-plus"></i>
+                        <span>Nuevo Idioma</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Búsqueda -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <form method="GET" class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ request.GET.q }}" 
+                           placeholder="Buscar idioma..."
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                </div>
+                <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar</span>
+                </button>
+                {% if request.GET.q %}
+                    <a href="{% url 'assistant:idioma_oficial_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Limpiar</span>
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Lista de idiomas -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            {% if idiomas %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                    {% for idioma in idiomas %}
+                        <div class="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200 group">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-language text-white text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900 text-lg">{{ idioma.nombre }}</h3>
+                                        <p class="text-sm text-gray-500">{{ idioma.paises.count }} país{{ idioma.paises.count|pluralize:"es" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Países que usan este idioma -->
+                            {% if idioma.paises.all %}
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Países:</h4>
+                                    <div class="flex flex-wrap gap-1">
+                                        {% for pais in idioma.paises.all|slice:":3" %}
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
+                                                {{ pais.nombre }}
+                                            </span>
+                                        {% endfor %}
+                                        {% if idioma.paises.count > 3 %}
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
+                                                +{{ idioma.paises.count|add:"-3" }} más
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Acciones -->
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'assistant:idioma_oficial_update' idioma.pk %}" 
+                                   class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200 text-center">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Editar
+                                </a>
+                                <a href="{% url 'assistant:idioma_oficial_delete' idioma.pk %}" 
+                                   class="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200 text-center">
+                                    <i class="fas fa-trash mr-1"></i>
+                                    Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-700">
+                                Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} idiomas
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                {% if page_obj.has_previous %}
+                                    <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Primera
+                                    </a>
+                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Anterior
+                                    </a>
+                                {% endif %}
+                                
+                                <span class="px-3 py-2 bg-purple-500 text-white rounded-lg text-sm">
+                                    {{ page_obj.number }}
+                                </span>
+                                
+                                {% if page_obj.has_next %}
+                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Siguiente
+                                    </a>
+                                    <a href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Última
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-language text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay idiomas registrados</h3>
+                    {% if request.GET.q %}
+                        <p class="text-gray-500 mb-4">No se encontraron idiomas que coincidan con "{{ request.GET.q }}"</p>
+                        <a href="{% url 'assistant:idioma_oficial_list' %}" class="text-purple-500 hover:text-purple-600">Ver todos los idiomas</a>
+                    {% else %}
+                        <p class="text-gray-500 mb-4">Comienza agregando tu primer idioma</p>
+                        <a href="{{ create_url }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors duration-200">
+                            Crear primer idioma
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Botón volver -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'assistant:menu' %}" class="inline-flex items-center text-gray-600 hover:text-purple-500 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Volver al menú principal
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,275 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Esta acción no se puede deshacer</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Cancelar</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Información del favorito a eliminar -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div class="p-6">
+                <!-- Preview del favorito completo -->
+                <div class="bg-gradient-to-br from-red-50 to-pink-50 border border-red-200 rounded-xl p-6 mb-6">
+                    <!-- Header del favorito -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-heart text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 text-lg">{{ object.usuario.get_full_name|default:object.usuario.username }}</h3>
+                                <p class="text-gray-500">{{ object.fecha_guardado|date:"d M Y H:i" }}</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800 font-medium">
+                            <i class="fas fa-heart mr-1"></i>
+                            Favorito
+                        </span>
+                    </div>
+
+                    <!-- Información del usuario -->
+                    <div class="mb-4">
+                        <div class="bg-white rounded-lg p-4 border border-red-200">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-user text-red-500 mr-2"></i>
+                                <span class="text-sm font-medium text-red-800">Usuario</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-red-200 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-red-700 font-bold">{{ object.usuario.username|first|upper }}</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">{{ object.usuario.get_full_name|default:object.usuario.username }}</div>
+                                    <div class="text-sm text-gray-500">{{ object.usuario.email }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tip cultural favorito -->
+                    <div class="mb-4">
+                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+                                <span class="text-sm font-medium text-blue-800">Tip Cultural</span>
+                            </div>
+                            
+                            <!-- Título del tip -->
+                            <h4 class="font-semibold text-blue-900 mb-2">{{ object.tip.titulo|default:"Sin título" }}</h4>
+                            
+                            <!-- Contenido del tip -->
+                            <p class="text-blue-800 text-sm mb-3">{{ object.tip.contenido|truncatewords:20 }}</p>
+                            
+                            <!-- Metadatos del tip -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                <div class="flex items-center">
+                                    <i class="fas fa-globe text-green-500 mr-1"></i>
+                                    <span class="text-gray-600">{{ object.tip.pais.nombre|default:"Sin país" }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-tag text-orange-500 mr-1"></i>
+                                    <span class="text-gray-600">{{ object.tip.categoria.nombre|default:"Sin categoría" }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-user text-purple-500 mr-1"></i>
+                                    <span class="text-gray-600">{{ object.tip.tipo_viajero.nombre|default:"General" }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if object.tip.destacado %}
+                                <div class="mt-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-star mr-1"></i>
+                                        Destacado
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Fecha de guardado -->
+                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar text-gray-500 mr-2"></i>
+                                <span class="text-sm font-medium text-gray-700">Guardado</span>
+                            </div>
+                            <span class="text-sm text-gray-600">{{ object.fecha_guardado|timesince }} atrás</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del usuario -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Información del usuario:</h4>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-blue-500"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-blue-800">{{ object.usuario.get_full_name|default:object.usuario.username }}</div>
+                                <div class="text-sm text-blue-700">{{ object.usuario.email }}</div>
+                                <div class="text-sm text-blue-600">
+                                    {{ object.usuario.paises_favoritos.count }} favorito{{ object.usuario.paises_favoritos.count|pluralize:"s" }} total{{ object.usuario.paises_favoritos.count|pluralize:"es" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del tip -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Información del tip cultural:</h4>
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm font-medium text-indigo-800">País</div>
+                                <div class="text-sm text-indigo-700">{{ object.tip.pais.nombre|default:"Sin país" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-indigo-800">Categoría</div>
+                                <div class="text-sm text-indigo-700">{{ object.tip.categoria.nombre|default:"Sin categoría" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-indigo-800">Tipo de viajero</div>
+                                <div class="text-sm text-indigo-700">{{ object.tip.tipo_viajero.nombre|default:"General" }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-indigo-800">Estado</div>
+                                <div class="text-sm text-indigo-700">
+                                    {% if object.tip.destacado %}Destacado{% else %}Normal{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advertencia -->
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">¡Atención!</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <p>{{ description }}</p>
+                                <p class="mt-2">Esta acción eliminará:</p>
+                                <ul class="list-disc list-inside mt-1 space-y-1">
+                                    <li>La marca de favorito de este usuario para este tip</li>
+                                    <li>El registro de la fecha en que fue guardado</li>
+                                    <li>La relación entre el usuario y el tip cultural</li>
+                                </ul>
+                                <p class="mt-2 font-medium">El tip cultural y el usuario NO serán eliminados, solo la relación de favorito.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impacto en estadísticas -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Impacto en estadísticas:</h4>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-chart-line text-yellow-500 mr-3"></i>
+                            <div>
+                                <div class="font-medium text-yellow-800">Reducción en contadores</div>
+                                <div class="text-sm text-yellow-700">
+                                    {{ object.usuario.get_full_name|default:object.usuario.username }} tendrá {{ object.usuario.paises_favoritos.count|add:"-1" }} favorito{{ object.usuario.paises_favoritos.count|add:"-1"|pluralize:"s" }} restante{{ object.usuario.paises_favoritos.count|add:"-1"|pluralize:"s" }}.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-red-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-red-600">
+                            {{ object.fecha_guardado|timesince|truncatewords:1 }}
+                        </div>
+                        <div class="text-sm text-red-600">Días como favorito</div>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-blue-600">{{ object.usuario.paises_favoritos.count }}</div>
+                        <div class="text-sm text-blue-600">Favoritos del usuario</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600">{{ object.tip.paises_favoritos.count }}</div>
+                        <div class="text-sm text-green-600">Usuarios que lo favorecen</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de confirmación -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-6">
+                {% csrf_token %}
+                
+                <!-- Confirmación de eliminación -->
+                <div class="mb-6">
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" 
+                               class="w-4 h-4 text-red-500 focus:ring-red-400 border-gray-300 rounded" 
+                               required 
+                               id="confirm-delete">
+                        <span class="text-sm font-medium text-gray-700">
+                            Confirmo que deseo eliminar permanentemente este favorito
+                            y entiendo que solo se eliminará la relación, no el usuario ni el tip
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex items-center justify-between">
+                    <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Cancelar</span>
+                    </a>
+                    <button type="submit" 
+                            class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl opacity-50 cursor-not-allowed"
+                            disabled
+                            id="delete-button">
+                        <i class="fas fa-trash"></i>
+                        <span>{{ grabar }}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Habilitar botón de eliminar solo cuando se confirme
+    document.getElementById('confirm-delete').addEventListener('change', function() {
+        const deleteButton = document.getElementById('delete-button');
+        if (this.checked) {
+            deleteButton.disabled = false;
+            deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            deleteButton.disabled = true;
+            deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    });
+</script>
+{% endblock %}

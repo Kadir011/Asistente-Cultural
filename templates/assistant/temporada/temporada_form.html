@@ -1,0 +1,232 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-calendar-alt text-sky-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Completa los campos para {{ grabar|lower }}</p>
+                </div>
+                <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <form method="post" class="p-8">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- País -->
+                    <div>
+                        <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.pais.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.pais }}
+                        {% if form.pais.errors %}
+                            {% for error in form.pais.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Tipo -->
+                    <div>
+                        <label for="{{ form.tipo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.tipo.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.tipo }}
+                        {% if form.tipo.errors %}
+                            {% for error in form.tipo.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Nombre -->
+                <div class="mt-6">
+                    <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.nombre.label }} <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        {% for error in form.nombre.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Ej: Temporada Seca, Temporada de Lluvias, Verano</p>
+                </div>
+
+                <!-- Período -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Período de la temporada</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Mes inicio -->
+                        <div>
+                            <label for="{{ form.mes_inicio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                {{ form.mes_inicio.label }} <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.mes_inicio }}
+                            {% if form.mes_inicio.errors %}
+                                {% for error in form.mes_inicio.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <!-- Mes fin -->
+                        <div>
+                            <label for="{{ form.mes_fin.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                {{ form.mes_fin.label }} <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.mes_fin }}
+                            {% if form.mes_fin.errors %}
+                                {% for error in form.mes_fin.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">Selecciona el período en que ocurre esta temporada</p>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mt-6">
+                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descripcion.label }}
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        {% for error in form.descripcion.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Describe las características de esta temporada, clima, actividades recomendadas, etc.</p>
+                </div>
+
+                <!-- Vista previa -->
+                <div class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-sm font-medium text-gray-700 mb-3">Vista previa:</h3>
+                    <div class="flex items-center" id="preview">
+                        <div class="w-12 h-12 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center mr-4">
+                            <i id="preview-icon" class="fas fa-calendar text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900" id="preview-name">Nombre de la temporada</div>
+                            <div class="text-sm text-gray-500" id="preview-country">País</div>
+                            <div class="text-sm text-sky-600" id="preview-period">Período</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                {% if form.instance.pk %}
+                    <div class="mt-6 bg-sky-50 border border-sky-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-sky-800 mb-2">Información actual:</h3>
+                        <div class="text-sm text-sky-700">
+                            <p><strong>País:</strong> {{ form.instance.pais.nombre }}</p>
+                            <p><strong>Tipo:</strong> {{ form.instance.get_tipo_display }}</p>
+                            <p><strong>Duración:</strong> 
+                                {% if form.instance.mes_inicio <= form.instance.mes_fin %}
+                                    {{ form.instance.mes_fin|add:"-1"|add:form.instance.mes_inicio|add:"1" }} meses
+                                {% else %}
+                                    {{ form.instance.mes_fin|add:"12"|add:"-1"|add:form.instance.mes_inicio|add:"1" }} meses (cruzando año)
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                    <div class="mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Botones -->
+                <div class="pt-6 border-t border-gray-200 mt-8">
+                    <div class="flex items-center justify-between">
+                        <a href="{{ back_url }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <i class="fas fa-times"></i>
+                            <span>Cancelar</span>
+                        </a>
+                        <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{ grabar }}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const meses = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    
+    const iconosPorTipo = {
+        'calida_humeda': 'fas fa-sun',
+        'fria_seca': 'fas fa-snowflake',
+        'primavera': 'fas fa-seedling',
+        'verano': 'fas fa-sun',
+        'otono': 'fas fa-leaf',
+        'invierno': 'fas fa-snowflake'
+    };
+
+    function updatePreview() {
+        const nameInput = document.getElementById('{{ form.nombre.id_for_label }}');
+        const countrySelect = document.getElementById('{{ form.pais.id_for_label }}');
+        const tipoSelect = document.getElementById('{{ form.tipo.id_for_label }}');
+        const mesInicioSelect = document.getElementById('{{ form.mes_inicio.id_for_label }}');
+        const mesFinSelect = document.getElementById('{{ form.mes_fin.id_for_label }}');
+        
+        const previewName = document.getElementById('preview-name');
+        const previewCountry = document.getElementById('preview-country');
+        const previewPeriod = document.getElementById('preview-period');
+        const previewIcon = document.getElementById('preview-icon');
+        
+        previewName.textContent = nameInput.value || 'Nombre de la temporada';
+        previewCountry.textContent = countrySelect.options[countrySelect.selectedIndex]?.text || 'País';
+        
+        const mesInicio = parseInt(mesInicioSelect.value);
+        const mesFin = parseInt(mesFinSelect.value);
+        
+        if (mesInicio && mesFin) {
+            previewPeriod.textContent = `${meses[mesInicio]} - ${meses[mesFin]}`;
+        } else {
+            previewPeriod.textContent = 'Período';
+        }
+        
+        const tipoValue = tipoSelect.value;
+        previewIcon.className = iconosPorTipo[tipoValue] + ' text-white text-lg' || 'fas fa-calendar text-white text-lg';
+    }
+
+    // Actualizar vista previa cuando se cambian los campos
+    document.addEventListener('DOMContentLoaded', function() {
+        updatePreview();
+        
+        document.getElementById('{{ form.nombre.id_for_label }}').addEventListener('input', updatePreview);
+        document.getElementById('{{ form.pais.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.tipo.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.mes_inicio.id_for_label }}').addEventListener('change', updatePreview);
+        document.getElementById('{{ form.mes_fin.id_for_label }}').addEventListener('change', updatePreview);
+    });
+</script>
+{% endblock %}

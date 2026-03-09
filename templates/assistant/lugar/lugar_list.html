@@ -1,0 +1,229 @@
+{% extends 'components/base.html' %}
+
+{% block title %}{{ title }} - TravelWorld{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-map-marker-alt text-teal-500 mr-3"></i>
+                        {{ title }}
+                    </h1>
+                    <p class="text-gray-600 mt-2">Gestiona los lugares turísticos y destinos destacados</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <a href="{{ create_url }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-plus"></i>
+                        <span>Nuevo Lugar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Búsqueda -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <form method="GET" class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ request.GET.q }}" 
+                           placeholder="Buscar por nombre, país o región..."
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200">
+                </div>
+                <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fas fa-search"></i>
+                    <span>Buscar</span>
+                </button>
+                {% if request.GET.q %}
+                    <a href="{% url 'assistant:lugar_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <i class="fas fa-times"></i>
+                        <span>Limpiar</span>
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Lista de lugares -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            {% if lugares %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                    {% for lugar in lugares %}
+                        <div class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 group">
+                            <!-- Imagen del lugar -->
+                            <div class="relative h-48 bg-gradient-to-br from-teal-400 to-teal-600">
+                                {% if lugar.imagen %}
+                                    <img src="{{ lugar.get_image_url }}" alt="{{ lugar.nombre }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <i class="fas fa-image text-white text-4xl opacity-50"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <!-- Badges -->
+                                <div class="absolute top-4 left-4">
+                                    {% if lugar.destacado %}
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-500 text-white font-medium">
+                                            <i class="fas fa-star mr-1"></i>
+                                            Destacado
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Región badge -->
+                                <div class="absolute top-4 right-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                                        {% if lugar.region == 'costa' %}bg-blue-500 text-white
+                                        {% elif lugar.region == 'sierra' %}bg-gray-500 text-white
+                                        {% elif lugar.region == 'amazonia' %}bg-green-500 text-white
+                                        {% elif lugar.region == 'galapagos' %}bg-cyan-500 text-white
+                                        {% elif lugar.region == 'norte' %}bg-indigo-500 text-white
+                                        {% elif lugar.region == 'sur' %}bg-purple-500 text-white
+                                        {% elif lugar.region == 'centro' %}bg-orange-500 text-white
+                                        {% elif lugar.region == 'este' %}bg-pink-500 text-white
+                                        {% elif lugar.region == 'oeste' %}bg-red-500 text-white
+                                        {% else %}bg-gray-500 text-white{% endif %}">
+                                        {{ lugar.get_region_display }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Contenido -->
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900 text-lg">{{ lugar.nombre }}</h3>
+                                        <p class="text-sm text-gray-500 flex items-center">
+                                            <i class="fas fa-globe text-teal-500 mr-1"></i>
+                                            {{ lugar.pais.nombre }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="mb-4">
+                                    <p class="text-gray-700 text-sm line-clamp-3">{{ lugar.descripcion|truncatewords:20 }}</p>
+                                </div>
+
+                                <!-- Información adicional -->
+                                <div class="mb-4 flex items-center justify-between text-sm">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-map-pin text-teal-500 mr-1"></i>
+                                        <span>{{ lugar.get_region_display }}</span>
+                                    </div>
+                                    {% if lugar.destacado %}
+                                        <div class="flex items-center text-yellow-600">
+                                            <i class="fas fa-star mr-1"></i>
+                                            <span>Destacado</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Acciones -->
+                                <div class="flex items-center space-x-2">
+                                    <a href="{% url 'assistant:lugar_update' lugar.pk %}" 
+                                       class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200 text-center">
+                                        <i class="fas fa-edit mr-1"></i>
+                                        Editar
+                                    </a>
+                                    <a href="{% url 'assistant:lugar_delete' lugar.pk %}" 
+                                       class="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm transition-colors duration-200 text-center">
+                                        <i class="fas fa-trash mr-1"></i>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-700">
+                                Mostrando {{ page_obj.start_index }} - {{ page_obj.end_index }} de {{ paginator.count }} lugares
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                {% if page_obj.has_previous %}
+                                    <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Primera
+                                    </a>
+                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Anterior
+                                    </a>
+                                {% endif %}
+                                
+                                <span class="px-3 py-2 bg-teal-500 text-white rounded-lg text-sm">
+                                    {{ page_obj.number }}
+                                </span>
+                                
+                                {% if page_obj.has_next %}
+                                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Siguiente
+                                    </a>
+                                    <a href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" 
+                                       class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
+                                        Última
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-map-marker-alt text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay lugares registrados</h3>
+                    {% if request.GET.q %}
+                        <p class="text-gray-500 mb-4">No se encontraron lugares que coincidan con "{{ request.GET.q }}"</p>
+                        <a href="{% url 'assistant:lugar_list' %}" class="text-teal-500 hover:text-teal-600">Ver todos los lugares</a>
+                    {% else %}
+                        <p class="text-gray-500 mb-4">Comienza agregando tu primer lugar turístico</p>
+                        <a href="{{ create_url }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-colors duration-200">
+                            Crear primer lugar
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Estadísticas -->
+        {% if lugares %}
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-teal-600">{{ lugares|length }}</div>
+                    <div class="text-sm text-gray-600">Total lugares</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-yellow-600">{% for lugar in lugares %}{% if lugar.destacado %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</div>
+                    <div class="text-sm text-gray-600">Destacados</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600">{% regroup lugares by pais as paises_list %}{{ paises_list|length }}</div>
+                    <div class="text-sm text-gray-600">Países</div>
+                </div>
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600">{% regroup lugares by region as regiones_list %}{{ regiones_list|length }}</div>
+                    <div class="text-sm text-gray-600">Regiones</div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Botón volver -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'assistant:menu' %}" class="inline-flex items-center text-gray-600 hover:text-teal-500 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Volver al menú principal
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

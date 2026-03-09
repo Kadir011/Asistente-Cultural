@@ -1,0 +1,645 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}{{ pais.nombre }} - {{ title }}{% endblock %}
+
+{% block content %}
+{% if error %}
+    <div class="min-h-screen flex items-center justify-center bg-gray-50">
+        <div class="text-center">
+            <h1 class="text-6xl font-bold text-gray-400 mb-4">404</h1>
+            <p class="text-xl text-gray-600 mb-6">{{ error }}</p>
+            <a href="{% url 'assistant:paises_public' %}" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors">
+                Ver Países Disponibles
+            </a>
+        </div>
+    </div>
+{% else %}
+<!-- Hero Section with Country Info -->
+<div class="relative bg-gradient-to-r from-orange-600 to-orange-800 text-white">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    {% if pais.ilustracion %}
+        <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('{{ pais.get_image_url }}');"></div>
+    {% endif %}
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+            <!-- Country Basic Info -->
+            <div class="lg:col-span-2">
+                <div class="flex items-center mb-4">
+                    <button onclick="window.history.back()" class="mr-4 p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-all">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    
+                    <!-- Favorite Button -->
+                    {% if user.is_authenticated %}
+                    <button id="favorite-btn" 
+                            onclick="toggleFavorite({{ pais.id }})" 
+                            class="mr-4 p-2 rounded-full transition-all duration-300 {{ is_favorite|yesno:'bg-red-500 hover:bg-red-600,bg-white bg-opacity-20 hover:bg-opacity-30' }}">
+                        <i class="fas fa-heart text-xl {{ is_favorite|yesno:'text-white,text-white' }}"></i>
+                    </button>
+                    {% else %}
+                    <div class="bg-orange-500 p-2 rounded-lg mr-4">
+                        <i class="fas fa-bookmark text-white text-xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <h1 class="text-5xl font-bold mb-4">{{ pais.nombre }}</h1>
+                <p class="text-orange-100 text-lg mb-6 leading-relaxed">{{ pais.descripcion_corta|default:"Descubre la belleza y cultura de este increíble destino." }}</p>
+                
+                {% if pais.ubicacion %}
+                <div class="flex items-center text-orange-100">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    <span>{{ pais.ubicacion }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Country Stats -->
+            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
+                <div class="space-y-4">
+                    {% if pais.capital %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-orange-100">Capital:</span>
+                        <span class="font-semibold">{{ pais.capital }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if pais.idioma_oficial %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-orange-100">Idioma:</span>
+                        <span class="font-semibold">{{ pais.idioma_oficial.nombre }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if pais.moneda %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-orange-100">Moneda:</span>
+                        <span class="font-semibold">{{ pais.moneda }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if pais.poblacion %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-orange-100">Población:</span>
+                        <span class="font-semibold">{{ pais.poblacion|floatformat:0 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Country Gallery -->
+    {% if galeria %}
+    <div class="mb-16">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <!-- Main Featured Image -->
+            {% with galeria.0 as main_image %}
+            <div class="lg:col-span-2">
+                <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <img src="{{ main_image.get_image_url }}" 
+                         alt="{{ main_image.titulo|default:pais.nombre }}" 
+                         class="w-full h-96 lg:h-[500px] object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">{{ main_image.titulo|default:"Galápagos" }}</h3>
+                        <p class="text-gray-200">{{ main_image.descripcion|default:"Descubre la biodiversidad única de este paraíso natural." }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+
+            <!-- Side Content -->
+            <div class="space-y-6">
+                <!-- Seasons Info -->
+                {% if temporadas %}
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-calendar-alt text-orange-500 mr-2"></i>
+                        Acerca
+                    </h3>
+                    {% for temporada in temporadas %}
+                    <div class="mb-4 last:mb-0">
+                        <div class="flex items-center mb-2">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                            <span class="font-medium text-gray-900">
+                                {{ temporada.nombre }} 
+                                {% if temporada.mes_inicio and temporada.mes_fin %}
+                                ({{ temporada.get_mes_inicio_display }} a {{ temporada.get_mes_fin_display }})
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% if temporada.descripcion %}
+                        <p class="text-gray-600 text-sm ml-6">{{ temporada.descripcion }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <!-- Default seasons info -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-calendar-alt text-orange-500 mr-2"></i>
+                        Acerca
+                    </h3>
+                    <div class="mb-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                            <span class="font-medium text-gray-900">Temporada Cálida y Húmeda (Diciembre a Mayo)</span>
+                        </div>
+                    </div>
+                    <div class="mb-4 last:mb-0">
+                        <div class="flex items-center mb-2">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                            <span class="font-medium text-gray-900">Temporada Fría y Seca (Junio a Noviembre)</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Tips Section -->
+                {% if tips_culturales %}
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-lightbulb text-orange-500 mr-2"></i>
+                        Tips
+                    </h3>
+                    {% for tip in tips_culturales|slice:":3" %}
+                    <div class="mb-3 last:mb-0">
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-700 text-sm">{{ tip.contenido }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <!-- Default tips -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-lightbulb text-orange-500 mr-2"></i>
+                        Tips
+                    </h3>
+                    <div class="mb-3">
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-700 text-sm">Usa ropa Ligera y de Secado Rápido</p>
+                        </div>
+                    </div>
+                    <div class="mb-3 last:mb-0">
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full mr-3 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-700 text-sm">Usa protección Solar</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Thumbnail Gallery -->
+        {% if galeria|length > 1 %}
+        <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+            {% for imagen in galeria|slice:"1:" %}
+            <div class="relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer" 
+                 onclick="changeMainImage('{{ imagen.get_image_url }}', '{{ imagen.titulo|default:pais.nombre }}', '{{ imagen.descripcion|default:"" }}')">
+                <img src="{{ imagen.get_image_url }}" 
+                     alt="{{ imagen.titulo|default:pais.nombre }}" 
+                     class="w-full h-20 object-cover hover:scale-105 transition-transform duration-300">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Complete Description Section with Full Layout -->
+    <div class="mb-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Left Column: Phrases and Tour Info -->
+            <div>
+                <!-- Tour Information First -->
+                {% if info_tours %}
+                <div class="mb-12">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {% for tour in info_tours %}
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                {% if tour.icono %}
+                                    <i class="{{ tour.icono }} text-orange-500 text-xl mr-2"></i>
+                                {% else %}
+                                    <i class="fas fa-info-circle text-orange-500 text-xl mr-2"></i>
+                                {% endif %}
+                                <h4 class="font-semibold text-gray-900">{{ tour.titulo }}</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">{{ tour.descripcion }}</p>
+                            {% if tour.duracion %}
+                            <p class="text-orange-500 text-xs">{{ tour.duracion }}</p>
+                            {% endif %}
+                            {% if tour.idiomas %}
+                            <p class="text-gray-500 text-xs mt-1">{{ tour.idiomas }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <!-- Default Tour Information -->
+                <div class="mb-12">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-info-circle text-orange-500 text-xl mr-2"></i>
+                                <h4 class="font-semibold text-gray-900">Tener En Cuenta</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Tener cuidado con la naturaleza, fauna y flora extravagante</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-clock text-orange-500 text-xl mr-2"></i>
+                                <h4 class="font-semibold text-gray-900">Duración Viaje</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">4 horas desde ubicación actual</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-xl p-6">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-language text-orange-500 text-xl mr-2"></i>
+                                <h4 class="font-semibold text-gray-900">Tour En</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Inglés - Español</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Phrases Section -->
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-8 flex items-center">
+                        <i class="fas fa-comments text-orange-500 mr-3"></i>
+                        Frase Útiles
+                    </h2>
+                    {% if frases_utiles %}
+                    <div class="space-y-4">
+                        {% for frase in frases_utiles %}
+                        <div class="bg-white rounded-lg border border-gray-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium text-gray-900">Frase {{ forloop.counter }}</span>
+                                {% if frase.audio %}
+                                <button class="text-orange-500 hover:text-orange-600 transition-colors" 
+                                        onclick="playAudio('{{ frase.audio.url }}')">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-gray-800">• {{ frase.frase_espanol }}</p>
+                                <p class="text-gray-600">• {{ frase.frase_local }}</p>
+                                {% if frase.pronunciacion %}
+                                <p class="text-orange-500 text-sm italic">• {{ frase.pronunciacion }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <!-- Default Phrases -->
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-lg border border-gray-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium text-gray-900">Frase 1</span>
+                                <button class="text-orange-500 hover:text-orange-600 transition-colors">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-gray-800">• Hola, ¿cómo estás?</p>
+                                <p class="text-gray-600">• Hello, how are you?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg border border-gray-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium text-gray-900">Frase 2</span>
+                                <button class="text-orange-500 hover:text-orange-600 transition-colors">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-gray-800">• Gracias</p>
+                                <p class="text-gray-600">• Thank you</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Column: Description -->
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Descripción</h2>
+                <div class="prose prose-lg text-gray-700 leading-relaxed">
+                    {% if pais.descripcion_completa %}
+                        {{ pais.descripcion_completa|linebreaks }}
+                    {% else %}
+                        <p class="mb-4">{{ pais.nombre }} es un país donde la naturaleza, la historia y la cultura se juntan en perfecta armonía. Ubicado en el corazón de Sudamérica, sobre la línea ecuatorial, este pequeño gigante ofrece una diversidad de paisajes y experiencias que sorprenden a todo el que lo visita.</p>
+                        
+                        <p class="mb-4">Conocido como "el país de los cuatro mundos", {{ pais.nombre }} reúne en un solo territorio:</p>
+                        
+                        <ul class="list-disc ml-6 mb-4 space-y-2">
+                            <li><strong>La Costa:</strong> Playas paradisíacas, pueblos pesqueros encantadores y una gastronomía costeña que te hace bailar la lengua.</li>
+                            <li><strong>La Sierra:</strong> Imponentes volcanes, ciudades coloniales llenas de historia y mercados indígenas con tradiciones milenarias.</li>
+                            <li><strong>La Amazonía:</strong> Selva pura y viva, donde la biodiversidad y las culturas ancestrales te muestran una forma distinta de ver la vida.</li>
+                            <li><strong>Las Islas Galápagos:</strong> Un laboratorio natural que inspiró a Darwin, hogar de especies únicas en el mundo y paisajes marinos que parecen de otro planeta.</li>
+                        </ul>
+                        
+                        <p>{{ pais.nombre }} no solo es naturaleza. También es gente cálida, fiestas vibrantes, música que se siente en el pecho y una mezcla de culturas que se refleja en cada rincón del país.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules and Precautions -->
+    {% if normas %}
+    <div class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Cosas Que Debes Evitar</h2>
+        
+        {% regroup normas by tipo as normas_by_type %}
+        {% for tipo_group in normas_by_type %}
+        <div class="mb-8">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 capitalize">{{ tipo_group.grouper|title }}s</h3>
+            <div class="space-y-3">
+                {% for norma in tipo_group.list %}
+                <div class="flex items-start bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
+                    <i class="fas fa-times text-red-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-red-800">{{ norma.titulo }}</h4>
+                        <p class="text-red-700 text-sm mt-1">{{ norma.descripcion }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Location Map -->
+    {% if pais.latitud and pais.longitud %}
+    <div class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Ubicación</h2>
+        <div class="bg-gray-100 rounded-xl p-4">
+            <a href="https://maps.google.com/?q={{ pais.latitud }},{{ pais.longitud }}" 
+               target="_blank" 
+               class="text-orange-500 hover:text-orange-600 mb-4 inline-block">
+                <i class="fas fa-external-link-alt mr-1"></i>
+                Abrir Google Maps
+            </a>
+            <div class="bg-white rounded-lg overflow-hidden shadow-lg">
+                <iframe 
+                    src="https://maps.google.com/maps?q={{ pais.latitud }},{{ pais.longitud }}&t=&z=8&ie=UTF8&iwloc=&output=embed"
+                    width="100%" 
+                    height="400" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Places to Visit -->
+    {% if lugares %}
+    <div class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Lugares para Visitar</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for lugar in lugares %}
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                {% if lugar.imagen %}
+                <img src="{{ lugar.get_image_url }}" 
+                     alt="{{ lugar.nombre }}" 
+                     class="w-full h-48 object-cover">
+                {% else %}
+                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <i class="fas fa-mountain text-gray-400 text-4xl"></i>
+                </div>
+                {% endif %}
+                
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-xl font-bold text-gray-900">{{ lugar.nombre }}</h3>
+                        {% if lugar.destacado %}
+                        <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">Destacado</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">{{ lugar.descripcion|truncatewords:20 }}</p>
+                    <div class="flex items-center">
+                        <i class="fas fa-map-marker-alt text-orange-500 mr-2"></i>
+                        <span class="text-orange-500 text-sm font-medium capitalize">{{ lugar.region }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Floating Action Buttons -->
+<div class="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
+    {% if user.is_authenticated %}
+    <button id="float-favorite-btn" 
+            onclick="toggleFavorite({{ pais.id }})" 
+            class="p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 {{ is_favorite|yesno:'bg-red-500 hover:bg-red-600,bg-gray-500 hover:bg-gray-600' }} text-white">
+        <i class="fas fa-heart text-xl"></i>
+    </button>
+    {% endif %}
+    
+    <button onclick="shareCountry()" 
+            class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all">
+        <i class="fas fa-share-alt text-xl"></i>
+    </button>
+    
+    <button onclick="scrollToTop()" 
+            class="bg-gray-600 hover:bg-gray-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+</div>
+
+<!-- Toast Message Container -->
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+<!-- Scripts -->
+<script>
+// Change main gallery image
+function changeMainImage(imageUrl, title, description) {
+    const mainImage = document.querySelector('.lg\\:col-span-2 img');
+    const titleElement = document.querySelector('.lg\\:col-span-2 h3');
+    const descElement = document.querySelector('.lg\\:col-span-2 p');
+    
+    if (mainImage) {
+        mainImage.src = imageUrl;
+        mainImage.alt = title;
+    }
+    if (titleElement) titleElement.textContent = title;
+    if (descElement) descElement.textContent = description;
+}
+
+// Play audio for phrases
+function playAudio(audioUrl) {
+    const audio = new Audio(audioUrl);
+    audio.play().catch(e => {
+        console.log('Error playing audio:', e);
+        showToast('No se pudo reproducir el audio', 'error');
+    });
+}
+
+// Share functionality
+function shareCountry() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ pais.nombre }} - TravelWorld',
+            text: '{{ pais.descripcion_corta|default:"Descubre este increíble destino" }}',
+            url: window.location.href
+        });
+    } else {
+        // Fallback - copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showToast('Enlace copiado al portapapeles', 'success');
+        });
+    }
+}
+
+// Toggle favorite functionality
+async function toggleFavorite(paisId) {
+    {% if not user.is_authenticated %}
+    showToast('Debes iniciar sesión para usar favoritos', 'error');
+    setTimeout(() => {
+        window.location.href = '{% url "security:login" %}';
+    }, 2000);
+    return;
+    {% endif %}
+    
+    try {
+        const response = await fetch(`{% url 'assistant:toggle_favorite_pais' 0 %}`.replace('0', paisId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update favorite buttons
+            updateFavoriteButtons(data.is_favorite);
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al procesar la solicitud', 'error');
+    }
+}
+
+// Update favorite button appearance
+function updateFavoriteButtons(isFavorite) {
+    const favoriteBtn = document.getElementById('favorite-btn');
+    const floatFavoriteBtn = document.getElementById('float-favorite-btn');
+    
+    if (favoriteBtn) {
+        if (isFavorite) {
+            favoriteBtn.className = 'mr-4 p-2 rounded-full transition-all duration-300 bg-red-500 hover:bg-red-600';
+        } else {
+            favoriteBtn.className = 'mr-4 p-2 rounded-full transition-all duration-300 bg-white bg-opacity-20 hover:bg-opacity-30';
+        }
+    }
+    
+    if (floatFavoriteBtn) {
+        if (isFavorite) {
+            floatFavoriteBtn.className = 'p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-red-500 hover:bg-red-600 text-white';
+        } else {
+            floatFavoriteBtn.className = 'p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-500 hover:bg-gray-600 text-white';
+        }
+    }
+}
+
+// Show toast messages
+function showToast(message, type) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    
+    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    
+    toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 opacity-0 translate-x-full`;
+    toast.innerHTML = `
+        <div class="flex items-center space-x-2">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('opacity-0', 'translate-x-full');
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-full');
+        setTimeout(() => {
+            if (container.contains(toast)) {
+                container.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Scroll to top
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Show scroll to top button when needed
+window.addEventListener('scroll', function() {
+    const scrollButton = document.querySelector('.fixed .bg-gray-600');
+    if (scrollButton) {
+        if (window.pageYOffset > 300) {
+            scrollButton.style.display = 'block';
+        } else {
+            scrollButton.style.display = 'none';
+        }
+    }
+});
+</script>
+
+{% endif %}
+{% endblock %}

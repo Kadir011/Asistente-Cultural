@@ -1,0 +1,34 @@
+from django.forms import ModelForm
+from django import forms
+from core.assistant.models import Norma
+
+# Formulario para crear una nueva norma
+class NormaForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 appearance-none bg-white'
+                })
+            elif isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200',
+                    'rows': 3
+                })
+            else:
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200'
+                })
+    
+    class Meta:
+        model = Norma
+        fields = '__all__'
+        widgets = {
+            'titulo': forms.TextInput(attrs={'placeholder': 'Ej: Lleva siempre tu documento'}),
+            'descripcion': forms.Textarea(attrs={'placeholder': 'Descripción de la norma'}),
+            'icono': forms.TextInput(attrs={'placeholder': 'Ej: fas fa-passport, fas fa-exclamation-triangle'}),
+            'orden': forms.NumberInput(attrs={'min': 0, 'placeholder': 'Orden de aparición'})
+        } 
+
+

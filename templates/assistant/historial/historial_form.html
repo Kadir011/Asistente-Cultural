@@ -1,0 +1,312 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="bg-gradient-to-r from-gray-600 to-gray-800 text-white py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">
+                    <i class="fas fa-history mr-3"></i>{{ title }}
+                </h1>
+                <p class="text-gray-200 text-lg">
+                    {% if object %}
+                        Modifica la información del registro de historial
+                    {% else %}
+                        Registra una nueva consulta en el historial
+                    {% endif %}
+                </p>
+            </div>
+            <div class="hidden md:block">
+                <div class="bg-gray-700 bg-opacity-50 rounded-lg p-4">
+                    <div class="flex items-center text-gray-200">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span class="text-sm">Gestión de Historial</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'assistant:menu' %}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                    <i class="fas fa-home mr-2"></i>Panel
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                    <a href="{% url 'assistant:historial_list' %}" class="ml-1 text-sm font-medium text-gray-700 hover:text-gray-900 md:ml-2">Historial</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">
+                        {% if object %}Editar{% else %}Crear{% endif %}
+                    </span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Form Section -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <!-- Form Header -->
+        <div class="bg-gray-50 border-b border-gray-200 px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="bg-gray-100 p-3 rounded-full mr-4">
+                        <i class="fas fa-history text-gray-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">
+                            {% if object %}
+                                Editar Registro de Historial
+                            {% else %}
+                                Nuevo Registro de Historial
+                            {% endif %}
+                        </h2>
+                        <p class="text-gray-600">
+                            {% if object %}
+                                Modifica los datos del registro seleccionado
+                            {% else %}
+                                Completa el formulario para registrar una nueva consulta
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+                    <i class="fas fa-clock mr-1"></i>
+                    <span>{{ "now"|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form method="post" enctype="multipart/form-data" class="p-8">
+            {% csrf_token %}
+            
+            <!-- Error Messages -->
+            {% if form.errors %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-8">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Por favor corrige los siguientes errores:</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Información del Usuario -->
+                <div class="space-y-6">
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-user text-gray-600 mr-2"></i>
+                            Información del Usuario
+                        </h3>
+                        
+                        <!-- Usuario -->
+                        <div class="mb-6">
+                            <label for="{{ form.usuario.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user mr-1"></i>{{ form.usuario.label }}
+                                {% if form.usuario.field.required %}
+                                    <span class="text-red-500">*</span>
+                                {% endif %}
+                            </label>
+                            {{ form.usuario }}
+                            {% if form.usuario.help_text %}
+                                <p class="mt-1 text-xs text-gray-500">{{ form.usuario.help_text }}</p>
+                            {% endif %}
+                            {% if form.usuario.errors %}
+                                <div class="mt-1 text-sm text-red-600">
+                                    {{ form.usuario.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Fecha de Consulta -->
+                    {% if object %}
+                    <div class="bg-blue-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-clock text-blue-600 mr-2"></i>
+                            Información Temporal
+                        </h3>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Fecha de Consulta:</span>
+                                <span class="text-sm text-gray-900 bg-white px-3 py-1 rounded">
+                                    {{ object.fecha_consulta|date:"d/m/Y H:i" }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Información de la Consulta -->
+                <div class="space-y-6">
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-search text-gray-600 mr-2"></i>
+                            Información de la Consulta
+                        </h3>
+                        
+                        <!-- País -->
+                        <div class="mb-6">
+                            <label for="{{ form.pais.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-globe mr-1"></i>{{ form.pais.label }}
+                                {% if form.pais.field.required %}
+                                    <span class="text-red-500">*</span>
+                                {% endif %}
+                            </label>
+                            {{ form.pais }}
+                            {% if form.pais.help_text %}
+                                <p class="mt-1 text-xs text-gray-500">{{ form.pais.help_text }}</p>
+                            {% endif %}
+                            {% if form.pais.errors %}
+                                <div class="mt-1 text-sm text-red-600">
+                                    {{ form.pais.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Tipo de Viajero -->
+                        <div class="mb-6">
+                            <label for="{{ form.tipo_viajero.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-suitcase mr-1"></i>{{ form.tipo_viajero.label }}
+                                {% if form.tipo_viajero.field.required %}
+                                    <span class="text-red-500">*</span>
+                                {% endif %}
+                            </label>
+                            {{ form.tipo_viajero }}
+                            {% if form.tipo_viajero.help_text %}
+                                <p class="mt-1 text-xs text-gray-500">{{ form.tipo_viajero.help_text }}</p>
+                            {% endif %}
+                            {% if form.tipo_viajero.errors %}
+                                <div class="mt-1 text-sm text-red-600">
+                                    {{ form.tipo_viajero.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="bg-yellow-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                            <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
+                            Información Importante
+                        </h3>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2 mt-0.5"></i>
+                                <span>El historial registra las consultas realizadas por los usuarios en el sistema.</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-clock text-yellow-500 mr-2 mt-0.5"></i>
+                                <span>La fecha de consulta se registra automáticamente al momento de la creación.</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-user-check text-yellow-500 mr-2 mt-0.5"></i>
+                                <span>Es importante asociar correctamente el usuario y las preferencias consultadas.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mt-8 pt-8 border-t border-gray-200 space-y-4 sm:space-y-0">
+                <div class="flex items-center text-sm text-gray-500">
+                    <i class="fas fa-asterisk text-red-400 mr-1 text-xs"></i>
+                    <span>Los campos marcados con asterisco (*) son obligatorios</span>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                    <a href="{{ back_url }}" 
+                       class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                        <i class="fas fa-save mr-2"></i>
+                        {{ grabar|default:"Guardar Registro" }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-8 bg-gray-50 rounded-xl p-6">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-question-circle text-gray-400 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">¿Necesitas ayuda?</h3>
+                <div class="text-gray-600 space-y-2">
+                    <p><strong>Usuario:</strong> Selecciona el usuario que realizó la consulta. Este campo es obligatorio.</p>
+                    <p><strong>País:</strong> Selecciona el país que fue consultado. Este campo es opcional.</p>
+                    <p><strong>Tipo de Viajero:</strong> Selecciona el tipo de viajero que fue filtrado en la consulta. Este campo es opcional.</p>
+                    <p class="text-sm text-gray-500 mt-4">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        El historial ayuda a entender las preferencias y comportamiento de navegación de los usuarios.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation feedback
+    const form = document.querySelector('form');
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    form.addEventListener('submit', function() {
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Guardando...';
+    });
+
+    // Auto-save indication (visual feedback)
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            this.classList.add('border-green-300');
+            setTimeout(() => {
+                this.classList.remove('border-green-300');
+            }, 1000);
+        });
+    });
+});
+</script>
+{% endblock %}

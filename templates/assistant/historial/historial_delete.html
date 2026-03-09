@@ -1,0 +1,299 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">
+                    <i class="fas fa-trash-alt mr-3"></i>{{ title }}
+                </h1>
+                <p class="text-red-100 text-lg">Confirma la eliminación del registro de historial</p>
+            </div>
+            <div class="hidden md:block">
+                <div class="bg-red-700 bg-opacity-50 rounded-lg p-4">
+                    <div class="flex items-center text-red-100">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        <span class="text-sm">Acción Irreversible</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{% url 'assistant:menu' %}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                    <i class="fas fa-home mr-2"></i>Panel
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                    <a href="{% url 'assistant:historial_list' %}" class="ml-1 text-sm font-medium text-gray-700 hover:text-gray-900 md:ml-2">Historial</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Eliminar</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Delete Confirmation Section -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <!-- Warning Header -->
+        <div class="bg-red-50 border-l-4 border-red-400 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-bold text-red-800">¡Atención!</h2>
+                    <p class="text-red-700">Esta acción no se puede deshacer. El registro será eliminado permanentemente.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Record Details -->
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <div class="mx-auto w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-history text-red-600 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Eliminar Registro de Historial</h3>
+                <p class="text-gray-600">{{ description }}</p>
+            </div>
+
+            <!-- Record Information Card -->
+            <div class="bg-gray-50 rounded-xl p-6 mb-8">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle text-gray-600 mr-2"></i>
+                    Información del Registro
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Usuario Information -->
+                    <div class="space-y-4">
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-gray-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Usuario</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ object.usuario.username }}</p>
+                                {% if object.usuario.email %}
+                                    <p class="text-sm text-gray-500">{{ object.usuario.email }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar text-gray-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Fecha de Consulta</p>
+                                <p class="text-lg font-semibold text-gray-900">{{ object.fecha_consulta|date:"d/m/Y" }}</p>
+                                <p class="text-sm text-gray-500">{{ object.fecha_consulta|time:"H:i" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Query Information -->
+                    <div class="space-y-4">
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-globe text-gray-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">País Consultado</p>
+                                {% if object.pais %}
+                                    <p class="text-lg font-semibold text-gray-900">{{ object.pais.nombre }}</p>
+                                    <p class="text-sm text-gray-500">{{ object.pais.codigo_iso }}</p>
+                                {% else %}
+                                    <p class="text-lg font-semibold text-gray-400 italic">Sin país especificado</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <div class="flex-shrink-0">
+                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-suitcase text-gray-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500">Tipo de Viajero</p>
+                                {% if object.tipo_viajero %}
+                                    <p class="text-lg font-semibold text-gray-900">{{ object.tipo_viajero.nombre }}</p>
+                                    {% if object.tipo_viajero.descripcion %}
+                                        <p class="text-sm text-gray-500">{{ object.tipo_viajero.descripcion|truncatewords:8 }}</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="text-lg font-semibold text-gray-400 italic">Sin tipo especificado</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consequences Warning -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-8">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="text-lg font-semibold text-yellow-800 mb-2">Consecuencias de esta acción:</h4>
+                        <ul class="text-yellow-700 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-minus-circle text-yellow-600 mr-2 mt-1 text-sm"></i>
+                                <span>Se perderá el registro de esta consulta específica del usuario</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-minus-circle text-yellow-600 mr-2 mt-1 text-sm"></i>
+                                <span>Los datos estadísticos del historial se verán afectados</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-minus-circle text-yellow-600 mr-2 mt-1 text-sm"></i>
+                                <span>Esta acción no se puede revertir</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Form -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Confirmation Checkbox -->
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input id="confirm-delete" 
+                               name="confirm_delete" 
+                               type="checkbox" 
+                               required
+                               class="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="confirm-delete" class="font-medium text-gray-700">
+                            Entiendo que esta acción es irreversible y confirmo que deseo eliminar este registro de historial.
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-gray-200 space-y-4 sm:space-y-0">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <i class="fas fa-shield-alt mr-1"></i>
+                        <span>Esta acción requiere confirmación adicional</span>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                        <a href="{{ back_url }}" 
+                           class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" 
+                                id="delete-button"
+                                disabled
+                                class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                            <i class="fas fa-trash-alt mr-2"></i>
+                            {{ grabar|default:"Eliminar Registro" }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="mt-8 bg-gray-50 rounded-xl p-6">
+        <div class="flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-lightbulb text-gray-400 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Información sobre el Historial</h3>
+                <div class="text-gray-600 space-y-2">
+                    <p>El historial de consultas es importante para:</p>
+                    <ul class="list-disc list-inside ml-4 space-y-1">
+                        <li>Entender las preferencias de navegación de los usuarios</li>
+                        <li>Generar estadísticas de uso del sistema</li>
+                        <li>Mejorar la experiencia de usuario basada en patrones de consulta</li>
+                        <li>Proporcionar recomendaciones personalizadas</li>
+                    </ul>
+                    <p class="text-sm text-gray-500 mt-4">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Considera si realmente necesitas eliminar este registro o si sería mejor mantenerlo para análisis futuros.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('confirm-delete');
+    const deleteButton = document.getElementById('delete-button');
+    
+    // Enable/disable delete button based on checkbox
+    checkbox.addEventListener('change', function() {
+        deleteButton.disabled = !this.checked;
+        
+        if (this.checked) {
+            deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            deleteButton.classList.add('hover:bg-red-700', 'transform', 'hover:-translate-y-0.5');
+        } else {
+            deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+            deleteButton.classList.remove('hover:bg-red-700', 'transform', 'hover:-translate-y-0.5');
+        }
+    });
+
+    // Form submission handling
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if (!checkbox.checked) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Show loading state
+        deleteButton.disabled = true;
+        deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Eliminando...';
+        
+        // Double confirmation
+        if (!confirm('¿Estás completamente seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.')) {
+            e.preventDefault();
+            deleteButton.disabled = false;
+            deleteButton.innerHTML = '<i class="fas fa-trash-alt mr-2"></i>Eliminar Registro';
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

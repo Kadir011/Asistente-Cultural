@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TravelWorld{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header con imagen de fondo condicional -->
+    <header class="relative {% block header_bg %}bg-white{% endblock %}">
+        <!-- Imagen de fondo para páginas específicas -->
+        {% block header_image %}{% endblock %}
+        
+        <!-- Navbar -->
+        <nav class="relative z-10 bg-white/90 backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <a href="{% url 'assistant:home' %}" class="flex items-center space-x-2">
+                            <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-plane text-white text-lg"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-800">
+                                Travel<span class="text-orange-500">World</span>
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- Navigation Links - Desktop -->
+                    <div class="hidden lg:flex items-center space-x-8">
+                        <a href="{% url 'assistant:home' %}" class="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium">
+                            Inicio
+                        </a>
+                        <a href="{% url 'assistant:paises_public' %}" class="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium">
+                            Países
+                        </a>
+                        <a href="{% url 'assistant:recomendaciones' %}" class="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium">
+                            Recomendaciones
+                        </a>
+                        <a href="{% url 'assistant:about' %}" class="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium">
+                            Sobre Nosotros
+                        </a>
+                        <a href="{% url 'assistant:contact' %}" class="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium">
+                            Contacto
+                        </a>
+                        <!-- Menú Admin solo para superusuarios -->
+                        {% if user.is_superuser %}
+                            <a href="{% url 'assistant:menu' %}" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                                <i class="fas fa-cogs"></i>
+                                <span>Admin</span>
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Authentication Buttons - Desktop -->
+                    <div class="hidden lg:flex items-center space-x-4">
+                        {% if user.is_authenticated %}
+                            <!-- Usuario autenticado -->
+                            <div class="relative" id="user-menu">
+                                <button type="button" class="flex items-center space-x-2 text-gray-700 hover:text-orange-500 transition-colors duration-200 px-3 py-2 rounded-lg" id="user-menu-button">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-sm font-semibold">
+                                            {{ user.first_name|first|default:user.username|first|upper }}
+                                        </span>
+                                    </div>
+                                    <span class="font-medium">{{ user.get_full_name|default:user.username }}</span>
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 hidden z-50" id="user-dropdown">
+                                    <div class="py-2">
+                                        <div class="px-4 py-3 border-b border-gray-200">
+                                            <p class="text-sm font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</p>
+                                            <p class="text-sm text-gray-500">{{ user.email }}</p>
+                                        </div>
+                                        <a href="{% url 'security:profile' %}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors">
+                                            <i class="fas fa-user-circle w-5 h-5 mr-3"></i>
+                                            Mi Perfil
+                                        </a>
+                                        <a href="{% url 'assistant:mis_favoritos' %}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-500 transition-colors">
+                                            <i class="fas fa-heart w-5 h-5 mr-3"></i>
+                                            Favoritos
+                                        </a>
+                                        <div class="border-t border-gray-200 my-1"></div>
+                                        <a href="{% url 'security:logout' %}" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 transition-colors">
+                                            <i class="fas fa-sign-out-alt w-5 h-5 mr-3"></i>
+                                            Cerrar Sesión
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bookmark button -->
+                            <button class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        {% else %}
+                            <!-- Usuario NO autenticado - BOTONES PRINCIPALES -->
+                            <a href="{% url 'security:login' %}" class="text-gray-700 hover:text-orange-500 transition-colors duration-200 font-medium px-4 py-2 rounded-lg border border-gray-300 hover:border-orange-500 flex items-center space-x-2">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Iniciar Sesión</span>
+                            </a>
+                            <a href="{% url 'security:register' %}" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 font-medium flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Registrarse</span>
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="lg:hidden">
+                        <button type="button" class="text-gray-700 hover:text-orange-500 focus:outline-none focus:text-orange-500 p-2" id="mobile-menu-button">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div class="lg:hidden hidden" id="mobile-menu">
+                <div class="px-4 pt-2 pb-4 space-y-2 bg-white border-t border-gray-200 shadow-lg">
+                    <!-- Navigation Links Mobile -->
+                    <a href="{% url 'assistant:home' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-home w-5 h-5 mr-3 inline"></i>Inicio
+                    </a>
+                    <a href="{% url 'assistant:paises_public' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-globe w-5 h-5 mr-3 inline"></i>Países
+                    </a>
+                    <a href="{% url 'assistant:recomendaciones' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-map-marker-alt w-5 h-5 mr-3 inline"></i>Recomendaciones
+                    </a>
+                    <a href="{% url 'assistant:about' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-envelope w-5 h-5 mr-3 inline"></i>Sobre Nosotros
+                    </a>
+                    <a href="{% url 'assistant:contact' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                        <i class="fas fa-envelope w-5 h-5 mr-3 inline"></i>Contacto
+                    </a>
+                    
+                    <!-- Admin móvil solo para superusuarios -->
+                    {% if user.is_superuser %}
+                        <a href="{% url 'assistant:menu' %}" class="block px-3 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 rounded-lg font-medium transition-colors mx-0 mt-2">
+                            <i class="fas fa-cogs w-5 h-5 mr-3 inline"></i>Panel Admin
+                        </a>
+                    {% endif %}
+                    
+                    <!-- Mobile Authentication Section -->
+                    <div class="border-t border-gray-200 pt-4 mt-4">
+                        {% if user.is_authenticated %}
+                            <div class="px-3 py-3 bg-orange-50 rounded-lg mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                                        <span class="text-white font-semibold">
+                                            {{ user.first_name|first|default:user.username|first|upper }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</p>
+                                        <p class="text-sm text-gray-600">{{ user.email }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{% url 'security:profile' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-user-circle w-5 h-5 mr-3 inline"></i>Mi Perfil
+                            </a>
+                            <a href="{% url 'assistant:mis_favoritos' %}" class="block px-3 py-2 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-heart w-5 h-5 mr-3 inline"></i>Favoritos
+                            </a>
+                            <a href="{% url 'security:logout' %}" class="block px-3 py-2 text-red-600 hover:text-red-500 hover:bg-red-50 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-sign-out-alt w-5 h-5 mr-3 inline"></i>Cerrar Sesión
+                            </a>
+                        {% else %}
+                            <!-- Mobile Login/Register Buttons -->
+                            <a href="{% url 'security:login' %}" class="block w-full text-center px-4 py-3 text-gray-700 hover:text-orange-500 border border-gray-300 hover:border-orange-500 rounded-lg font-medium transition-colors mb-3">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+                            </a>
+                            <a href="{% url 'security:register' %}" class="block w-full text-center px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors shadow-lg">
+                                <i class="fas fa-user-plus mr-2"></i>Registrarse
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Content para páginas específicas -->
+        {% block hero_content %}{% endblock %}
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Información -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">Información</h3>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-plane text-white"></i>
+                        </div>
+                        <span class="text-2xl font-bold">
+                            Travel<span class="text-orange-500">World</span>
+                        </span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Copyright 2021 AGTravel. Todos los derechos<br>
+                        Reservados
+                    </p>
+                </div>
+
+                <!-- Páginas -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">Páginas</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'assistant:home' %}" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                Inicio
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
+                                Países
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social Media -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-gray-300">Síguenos</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-lg flex items-center justify-center transition-colors duration-200">
+                            <i class="fab fa-facebook-f text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-lg flex items-center justify-center transition-colors duration-200">
+                            <i class="fab fa-twitter text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-lg flex items-center justify-center transition-colors duration-200">
+                            <i class="fab fa-instagram text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-lg flex items-center justify-center transition-colors duration-200">
+                            <i class="fab fa-pinterest text-white"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // User dropdown menu toggle (desktop)
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userDropdown = document.getElementById('user-dropdown');
+        
+        if (userMenuButton && userDropdown) {
+            userMenuButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                userDropdown.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const userMenu = document.getElementById('user-menu');
+                if (userMenu && !userMenu.contains(event.target)) {
+                    userDropdown.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
