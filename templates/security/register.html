@@ -264,6 +264,14 @@
                                 <p class="mt-1 text-sm text-gray-500">{{ form.password2.help_text }}</p>
                             {% endif %}
                         </div>
+
+                        <!-- Generador de Contraseña -->
+                        <div class="flex justify-center">
+                            <button type="button" onclick="generatePassword()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200 border border-gray-300">
+                                <i class="fas fa-random mr-2"></i>
+                                Generar Contraseña Segura
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -364,6 +372,25 @@
             passwordField.type = 'password';
             eyeIcon.classList.remove('fa-eye-slash');
             eyeIcon.classList.add('fa-eye');
+        }
+    }
+
+    function generatePassword() {
+        const length = 12;
+        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+        let password = '';
+        const array = new Uint32Array(length);
+        window.crypto.getRandomValues(array);
+        for (let i = 0; i < length; i++) {
+            password += charset[array[i] % charset.length];
+        }
+        
+        const password1Field = document.getElementById('{{ form.password1.id_for_label }}');
+        const password2Field = document.getElementById('{{ form.password2.id_for_label }}');
+        
+        if (password1Field && password2Field) {
+            password1Field.value = password;
+            password2Field.value = password;
         }
     }
 
