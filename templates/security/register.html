@@ -1,7 +1,6 @@
 {% extends 'components/base.html' %}
-
+{% load static %}
 {% block title %}{{ title }} - TravelWorld{% endblock %}
-
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-2xl mx-auto">
@@ -267,7 +266,7 @@
 
                         <!-- Generador de Contraseña -->
                         <div class="flex justify-center">
-                            <button type="button" onclick="generatePassword()" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200 border border-gray-300">
+<button type="button" onclick="generatePassword('{{ form.password1.id_for_label }}', '{{ form.password2.id_for_label }}')" class="inline-flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200 border border-gray-300">
                                 <i class="fas fa-random mr-2"></i>
                                 Generar Contraseña Segura
                             </button>
@@ -322,87 +321,9 @@
 {% endblock %}
 
 {% block extra_css %}
-<style>
-    /* Custom form field styles - aplica a TODOS los inputs y selects */
-    input[type="text"], input[type="password"], input[type="email"], select, textarea {
-        @apply w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200;
-    }
-    
-    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
-        @apply shadow-lg;
-    }
-
-    /* Custom select styling */
-    select {
-        @apply appearance-none bg-white;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-        background-position: right 0.5rem center;
-        background-repeat: no-repeat;
-        background-size: 1.5em 1.5em;
-        padding-right: 2.5rem;
-    }
-
-    /* Forzar estilos específicos para campos de Django */
-    form input, form select, form textarea {
-        @apply w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 !important;
-    }
-
-    form select {
-        @apply appearance-none bg-white !important;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
-        background-position: right 0.5rem center !important;
-        background-repeat: no-repeat !important;
-        background-size: 1.5em 1.5em !important;
-        padding-right: 2.5rem !important;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    function togglePassword(fieldId) {
-        const passwordField = document.getElementById(fieldId);
-        const eyeIcon = document.getElementById('eye-icon-' + fieldId);
-        
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            eyeIcon.classList.remove('fa-eye');
-            eyeIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordField.type = 'password';
-            eyeIcon.classList.remove('fa-eye-slash');
-            eyeIcon.classList.add('fa-eye');
-        }
-    }
-
-    function generatePassword() {
-        const length = 12;
-        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-        let password = '';
-        const array = new Uint32Array(length);
-        window.crypto.getRandomValues(array);
-        for (let i = 0; i < length; i++) {
-            password += charset[array[i] % charset.length];
-        }
-        
-        const password1Field = document.getElementById('{{ form.password1.id_for_label }}');
-        const password2Field = document.getElementById('{{ form.password2.id_for_label }}');
-        
-        if (password1Field && password2Field) {
-            password1Field.value = password;
-            password2Field.value = password;
-        }
-    }
-
-    // Auto-resize textareas
-    document.addEventListener('DOMContentLoaded', function() {
-        const textareas = document.querySelectorAll('textarea');
-        textareas.forEach(textarea => {
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = this.scrollHeight + 'px';
-            });
-        });
-    });
-</script>
+<script src="{% static 'js/password_auth.js' %}"></script>
 {% endblock %}
