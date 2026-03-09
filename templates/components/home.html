@@ -425,10 +425,64 @@
                 <i class="fas fa-compass mr-2"></i>Obtener Recomendaciones
             </a>
         </div>
-    </div>
-</section>
+{% endblock %}
 
-<!-- JavaScript -->
+{% block extra_css %}
+<style>
+/* Asegurar que los dropdowns tengan el z-index correcto */
+#user-dropdown {
+    z-index: 9999 !important;
+    position: absolute !important;
+}
+
+/* Asegurar que los elementos del navbar tengan prioridad */
+nav, .navbar, header nav {
+    z-index: 999 !important;
+}
+
+/* Evitar que elementos del home interfieran con el header */
+.country-filter {
+    z-index: auto;
+}
+
+/* Asegurar que todos los enlaces del dropdown funcionen */
+#user-dropdown a {
+    pointer-events: auto !important;
+    display: block !important;
+}
+
+/* Específicamente para enlaces de logout */
+a[href*="logout"] {
+    pointer-events: auto !important;
+}
+
+/* Hero section debe estar debajo del navbar */
+.hero-section {
+    z-index: 1;
+}
+
+/* Asegurar que no hay elementos que bloqueen clicks en el header */
+header * {
+    pointer-events: auto;
+}
+
+/* Fix para mobile menu también */
+#mobile-menu {
+    z-index: 998 !important;
+}
+
+/* Asegurar que el backdrop del hero no interfiera */
+.absolute.inset-0 {
+    pointer-events: none;
+}
+
+.relative.z-10 {
+    pointer-events: auto;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 // Asegurar que no hay conflictos con otros scripts
 (function() {
@@ -457,9 +511,9 @@
         {% if user.is_authenticated %}
             // Implement bookmark functionality
             console.log('Toggle bookmark for country:', countryId);
-            showNotification('Funcionalidad de marcadores próximamente', 'info');
+            showNotification('Funcionalidad de marcadores proximamente', 'info');
         {% else %}
-            showNotification('Debes iniciar sesión para guardar marcadores', 'warning');
+            showNotification('Debes iniciar sesion para guardar marcadores', 'warning');
         {% endif %}
     };
 
@@ -536,59 +590,4 @@
 // Asegurar que el JavaScript del base.html funcione correctamente
 // No redefinir ni interferir con los event listeners del header
 </script>
-
-<!-- CSS adicional para asegurar que no hay conflictos -->
-<style>
-/* Asegurar que los dropdowns tengan el z-index correcto */
-#user-dropdown {
-    z-index: 9999 !important;
-    position: absolute !important;
-}
-
-/* Asegurar que los elementos del navbar tengan prioridad */
-nav, .navbar, header nav {
-    z-index: 999 !important;
-}
-
-/* Evitar que elementos del home interfieran con el header */
-.country-filter {
-    z-index: auto;
-}
-
-/* Asegurar que todos los enlaces del dropdown funcionen */
-#user-dropdown a {
-    pointer-events: auto !important;
-    display: block !important;
-}
-
-/* Específicamente para enlaces de logout */
-a[href*="logout"] {
-    pointer-events: auto !important;
-}
-
-/* Hero section debe estar debajo del navbar */
-.hero-section {
-    z-index: 1;
-}
-
-/* Asegurar que no hay elementos que bloqueen clicks en el header */
-header * {
-    pointer-events: auto;
-}
-
-/* Fix para mobile menu también */
-#mobile-menu {
-    z-index: 998 !important;
-}
-
-/* Asegurar que el backdrop del hero no interfiera */
-.absolute.inset-0 {
-    pointer-events: none;
-}
-
-.relative.z-10 {
-    pointer-events: auto;
-}
-</style>
-{% endblock %}
-
+{% endblock %} 
