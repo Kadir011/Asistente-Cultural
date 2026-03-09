@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+import logging
+from django.contrib.messages import constants as messages
+from decouple import config
 
 load_dotenv() # Cargar el archivo .env 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -158,18 +161,19 @@ LOGIN_URL = 'security:login'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # La sesión expira al cerrar el navegador
 SESSION_COOKIE_AGE = 1209600  # 2 semanas (en segundos) si el usuario mantiene la sesión abierta
 
-from django.contrib.messages import constants as messages
 # Configuración de mensajes
 MESSAGE_TAGS = {
     messages.SUCCESS: 'success',
     messages.ERROR: 'danger',
 }
 
-from decouple import config
 # Configuración de correo
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='barquetbravokadir@gmail.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='') 
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+
+# Silenciar warnings del servidor de desarrollo
+logging.getLogger('django.server').setLevel(logging.ERROR) 
