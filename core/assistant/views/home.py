@@ -16,7 +16,7 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'TravelWorld - Viaja Inteligente'
+        context['title'] = 'CultureQuest - Viaja Inteligente'
         
         # Datos para mostrar en el home
         context['total_paises'] = Pais.objects.count()
