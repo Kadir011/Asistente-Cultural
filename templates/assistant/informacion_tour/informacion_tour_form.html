@@ -289,7 +289,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
     function setIcon(iconClass) {
         document.getElementById('{{ form.icono.id_for_label }}').value = iconClass;

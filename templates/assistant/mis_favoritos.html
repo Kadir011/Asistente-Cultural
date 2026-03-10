@@ -218,7 +218,9 @@
         </div>
     {% endif %}
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <!-- JavaScript -->
 <script>
 // Remove favorite functionality
@@ -281,7 +283,9 @@ function showMessage(message, type) {
     }, 3000);
 }
 </script>
+{% endblock %}
 
+{% block extra_css %}
 <!-- Add to head for line-clamp utility -->
 <style>
 .line-clamp-2 {

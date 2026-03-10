@@ -223,7 +223,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
     function updatePreview() {
         const titleInput = document.getElementById('{{ form.titulo.id_for_label }}');
