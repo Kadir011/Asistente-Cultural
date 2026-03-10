@@ -175,5 +175,8 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='barquetbravokadir@gmail.com')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 
+# Configuración de Gemini AI
+GEMINI_AI_API_KEY = os.getenv('GEMINI_AI_API_KEY')
+
 # Silenciar warnings del servidor de desarrollo
 logging.getLogger('django.server').setLevel(logging.ERROR) 
