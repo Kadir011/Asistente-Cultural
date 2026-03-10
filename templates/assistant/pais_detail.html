@@ -507,7 +507,7 @@ function playAudio(audioUrl) {
 function shareCountry() {
     if (navigator.share) {
         navigator.share({
-            title: '{{ pais.nombre }} - TravelWorld',
+            title: '{{ pais.nombre }} - CultureQuest',
             text: '{{ pais.descripcion_corta|default:"Descubre este increíble destino" }}',
             url: window.location.href
         });
