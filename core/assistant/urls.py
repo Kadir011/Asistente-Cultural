@@ -1,5 +1,6 @@
 from django.urls import path
 from core.assistant.views import home, pais, categoria, tipo_viajero, temporada, galeria, lugar, norma, frase, tour, tip_cultural, favoritos, historial, recomendador, idioma
+from core.assistant.views.chatbot import ChatbotCulturalView, ChatbotGuardarFavoritoView, ChatbotQuitarFavoritoView, ChatbotBuscarView
  
 app_name = 'assistant'
 
@@ -128,5 +129,13 @@ urlpatterns = [
     path('admin/historial/<int:pk>/update/', historial.HistorialUpdateView.as_view(), name='historial_update'),
     path('admin/historial/<int:pk>/delete/', historial.HistorialDeleteView.as_view(), name='historial_delete'),
     path('historial/clear/', historial.HistorialClearView.as_view(), name='historial_clear'),
+
+    # ================================
+    # CHATBOT
+    # ================================
+    path('api/chatbot/', ChatbotCulturalView.as_view(), name='chatbot'),
+    path('api/chatbot/favorito/guardar/', ChatbotGuardarFavoritoView.as_view(), name='chatbot_guardar_favorito'),
+    path('api/chatbot/favorito/quitar/', ChatbotQuitarFavoritoView.as_view(), name='chatbot_quitar_favorito'),
+    path('api/chatbot/buscar/', ChatbotBuscarView.as_view(), name='chatbot_buscar'),
 ]
 
