@@ -146,7 +146,7 @@ const Chatbot = {
         this.showLoading();
 
         try {
-            const response = await fetch('/assistant/api/chatbot/', {
+            const response = await fetch('/api/chatbot/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ const Chatbot = {
             if (!contentType.includes('application/json')) {
                 throw new Error(
                     'El servidor devolvió HTML en vez de JSON. ' +
-                    'Verifica que /assistant/api/chatbot/ esté en urls.py y apunte a ChatbotCulturalView.'
+                    'Verifica que /api/chatbot/ esté en urls.py y apunte a ChatbotCulturalView.'
                 );
             }
 
@@ -216,7 +216,7 @@ const Chatbot = {
             this.addBotMessage('⚠️ Debes iniciar sesión para guardar favoritos.');
             return;
         }
-        await this._favoritoRequest('/assistant/api/chatbot/favorito/guardar/', tipId);
+        await this._favoritoRequest('/api/chatbot/favorito/guardar/', tipId);
     },
 
     async removeFavorite(tipId) {
@@ -224,7 +224,7 @@ const Chatbot = {
             this.addBotMessage('⚠️ Debes iniciar sesión para quitar favoritos.');
             return;
         }
-        await this._favoritoRequest('/assistant/api/chatbot/favorito/quitar/', tipId);
+        await this._favoritoRequest('/api/chatbot/favorito/quitar/', tipId);
     },
 
     async _favoritoRequest(url, tipId) {
@@ -251,7 +251,7 @@ const Chatbot = {
 
     async search(query, tipo = 'pais') {
         try {
-            const url  = `/assistant/api/chatbot/buscar/?q=${encodeURIComponent(query)}&tipo=${tipo}`;
+            const url  = `/api/chatbot/buscar/?q=${encodeURIComponent(query)}&tipo=${tipo}`;
             const res  = await fetch(url);
             const data = await res.json();
             return data.results || [];
