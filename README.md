@@ -7,7 +7,7 @@
 ![Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
 <br>
 
@@ -167,8 +167,8 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 ┌──────────────────────────────────────────────────────────────┐
 │                        FRONTEND                               │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────┐   │
-│  │   HTML5     │  │   Bootstrap 5 │  │  Crispy Forms     │   │
-│  │   + CSS3    │  │   (Styling)   │  │  (Form Rendering)  │   │
+│  │   HTML5     │  │   Tailwind   │  │  Alpine.js        │   │
+│  │   + CSS3    │  │   CSS        │  │  (Interactivity)   │   │
 │  └─────────────┘  └──────────────┘  └────────────────────┘   │
 ├──────────────────────────────────────────────────────────────┤
 │                        BACKEND                                │
@@ -201,8 +201,8 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 |-----------|-----------|---------|-----------|
 | **Framework** | Django | 5.2.4 | Backend completo con ORM |
 | **AI** | Google Gemini AI | 1.66.0 | Motor de chatbot inteligente |
-| **Frontend** | Bootstrap 5 | 5.x | Framework CSS responsivo |
-| **Forms** | Django Crispy Forms | 2.4 | Renderizado de formularios |
+| **Frontend** | Tailwind CSS | 3.x | Framework CSS utility-first |
+| **Interactivity** | Alpine.js | 3.x | lightweight JavaScript framework |
 | **Images** | Pillow | 11.3.0 | Procesamiento de imágenes |
 | **Database** | MySQL/PostgreSQL | - | Almacenamiento de datos |
 | **Security** | Django Security | - | Autenticación y permisos |
