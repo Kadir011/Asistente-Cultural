@@ -19,9 +19,8 @@
   <strong>Asistente Cultural</strong> es una plataforma web innovadora que combina inteligencia artificial con información cultural detallada para ofrecer a los viajeros una experiencia de viaje más rica y preparada. Desde consejos sobre etiquette local hasta frases útiles en el idioma del país, acompañamos a cada usuario en su descubrimiento cultural.
 </p>
 
-[![Deploy with Railway](https://img.shields.io/badge/Railway-Deployment-ready-7952B3?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Status-Development-yellow?style=for-the-badge)]()
 
 ---
 
@@ -190,8 +189,8 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 ├──────────────────────────────────────────────────────────────┤
 │                        DEPLOYMENT                             │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────┐   │
-│  │   Railway   │  │   Whitenoise │  │  Pillow            │   │
-│  │   (Hosting) │  │  (Static)    │  │  (Images)          │   │
+│  │   Local    │  │   Prepared   │  │  Ready for         │   │
+│  │  Dev       │  │  for Cloud   │  │  Vercel/Render     │   │
 │  └─────────────┘  └──────────────┘  └────────────────────┘   │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -278,10 +277,6 @@ DB_PORT=3306
 
 # Google Gemini API (Opcional - para chatbot)
 GOOGLE_API_KEY=tu_api_key_de_gemini
-
-# Servidor de Producción
-RAILWAY_STATIC_ROOT=staticfiles
-PORT=8000
 ```
 
 ### 5. Configurar la Base de Datos
