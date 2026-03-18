@@ -1,11 +1,11 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
@@ -21,6 +21,8 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Development-yellow?style=for-the-badge)]()
+
+</div>
 
 ---
 
@@ -52,6 +54,8 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 
 **Asistente Cultural** es una plataforma SaaS que proporciona:
 
+<div align="center">
+
 | Servicio | Descripción | Valor para el Usuario |
 |----------|-------------|----------------------|
 | 🤖 Chatbot IA | Consultas personalizadas sobre cultura local | Respuestas instantáneas y contextualizadas |
@@ -60,6 +64,8 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 | 🎯 Tips Personalizados | Consejos según tipo de viajero | Experiencias adaptadas a cada perfil |
 | ❤️ Sistema de Favoritos | Guarda y organiza información | Acceso rápido a contenido relevante |
 | 📊 Historial Inteligente | Rastreo de consultas previas | Aprendizaje progresivo del usuario |
+
+</div>
 
 ### Modelo de Negocio
 
@@ -183,7 +189,7 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 ├──────────────────────────────────────────────────────────────┤
 │                        DATA LAYER                            │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────┐   │
-│  │   MySQL     │  │  PostgreSQL  │  │  Django ORM        │   │
+│  │   PostgreSQL  │  │  Django ORM        │   │
 │  │   (Dev)     │  │  (Production)│  │  (Abstraction)     │   │
 │  └─────────────┘  └──────────────┘  └────────────────────┘   │
 ├──────────────────────────────────────────────────────────────┤
@@ -197,6 +203,8 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 
 ### Tecnologías Detalladas
 
+<div align="center">
+
 | Categoría | Tecnología | Versión | Propósito |
 |-----------|-----------|---------|-----------|
 | **Framework** | Django | 5.2.4 | Backend completo con ORM |
@@ -204,8 +212,10 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 | **Frontend** | Tailwind CSS | 3.x | Framework CSS utility-first |
 | **Interactivity** | Alpine.js | 3.x | lightweight JavaScript framework |
 | **Images** | Pillow | 11.3.0 | Procesamiento de imágenes |
-| **Database** | MySQL/PostgreSQL | - | Almacenamiento de datos |
+| **Database** | PostgreSQL | - | Almacenamiento de datos |
 | **Security** | Django Security | - | Autenticación y permisos |
+
+</div>
 
 ### Patrones de Diseño
 
@@ -227,7 +237,7 @@ Los viajeros frecuentemente enfrentan **barreras culturales** que limitan su exp
 
 ```
 ✅ Python 3.10 o superior
-✅ MySQL 8.0 o PostgreSQL 14+
+✅ PostgreSQL 14+
 ✅ Git
 ✅ pip (gestor de paquetes Python)
 ```
@@ -267,13 +277,13 @@ SECRET_KEY=tu-clave-secreta-aqui
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-# Base de Datos (MySQL)
-DB_ENGINE=django.db.backends.mysql
+# Base de Datos (PostgreSQL)
+DB_ENGINE=django.db.backends.postgresql
 DB_NAME=asistente_cultural
 DB_USER=tu_usuario
 DB_PASSWORD=tu_password
 DB_HOST=localhost
-DB_PORT=3306
+DB_PORT=5432
 
 # Google Gemini API (Opcional - para chatbot)
 GOOGLE_API_KEY=tu_api_key_de_gemini
@@ -564,6 +574,8 @@ El chatbot está diseñado para proporcionar respuestas culturalmente contextual
 
 ### Características del Chatbot
 
+<div align="center">
+
 | Función | Descripción |
 |---------|-------------|
 | **Contexto Cultural** | Utiliza la base de datos del sistema para contexto |
@@ -571,6 +583,8 @@ El chatbot está diseñado para proporcionar respuestas culturalmente contextual
 | **Historial** | Mantiene contexto de conversaciones anteriores |
 | **Fallback** | Respuestas predefinidas si la API no está disponible |
 | **Logging** | Registro de todas las consultas para mejora continua |
+
+</div>
 
 ### Prompt Engineering
 
@@ -589,13 +603,9 @@ El sistema utiliza técnicas de prompt engineering para:
 ### Kadir Barquet Bravo
 **Desarrollador Full Stack | Especializado en Django & AI**
 
-<br>
-
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Kadir%20Barquet-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/kadir-barquet-bravo/)
 [![GitHub](https://img.shields.io/badge/GitHub-Kadir011-333?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Kadir011)
 [![Email](https://img.shields.io/badge/Email-barquetbravokadir@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:barquetbravokadir@gmail.com)
-
-<br>
 
 ### ¿Interesado en conectar?
 
@@ -609,14 +619,6 @@ Si te interesa este proyecto, quieres colaborar o discutir oportunidades profesi
 ```
 
 </div>
-
----
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
-
----
 
 <div align="center">
 
